@@ -19,5 +19,6 @@ The primary goal of this project is to create a command-line application that re
 Additional possible features include (depending on available time):
   * Possibility of choosing square, rectangle and non-power-of-two dimensions for the sprite sheet
   * Cropping of transparent pixels on sprites, providing optimal bounding rectangles
+  * Padding pixels around sprites to avoid color bleeding, an artifact that can appear when drawing scaled and rotated sprites at non-integer coordinates.
   * Possibility of allowing 90 degree rotations
   * Automatically generated convex polygons (Very advanced feature)
