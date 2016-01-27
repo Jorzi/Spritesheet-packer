@@ -7,14 +7,10 @@ package spritesheetpacker;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 /**
@@ -28,9 +24,12 @@ public class SpritesheetPacker {
      */
     public static void main(String[] args) {
 
-        // TODO code application logic here
-        //BufferedImage image = ImageIO.read(new File("lol.png"));
-        File f = new File("./");
+        String filePath = ".";
+        if (args.length > 0) {
+            filePath = args[0];
+        }
+
+        File f = new File(filePath);
         ArrayList<File> files = new ArrayList<>(Arrays.asList(f.listFiles()));
         ArrayList<File> imageFiles = imagesOnly(files);
         System.out.println(imageFiles);
