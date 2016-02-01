@@ -103,29 +103,6 @@ public class SpritesheetPacker {
         return images;
     }
 
-    /**
-     * Primitive method that lines up all images horizontally
-     *
-     * @param images
-     * @return a sprite sheet image in the BufferedImage format. Resolution is
-     * determined by the bounding box.
-     */
-    public static BufferedImage naiveSpritesheetGenerator(ArrayList<BufferedImage> images) {
-        int totalHeight = 0;
-        int totalWidth = 0;
-        for (BufferedImage image : images) {
-            totalHeight = Math.max(totalHeight, image.getHeight());
-            totalWidth += image.getWidth();
-        }
-        BufferedImage spritesheet = new BufferedImage(totalWidth, totalHeight, BufferedImage.TYPE_4BYTE_ABGR);
-        Graphics2D canvas = spritesheet.createGraphics();
-        int displaceX = 0;
-        for (BufferedImage image : images) {
-            canvas.drawImage(image, displaceX, 0, null);
-            displaceX += image.getWidth();
-        }
-        return spritesheet;
-    }
 
     /**
      * Loads the image data from the specified files using the specified
