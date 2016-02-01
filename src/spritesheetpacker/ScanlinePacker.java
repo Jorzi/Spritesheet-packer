@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
+ * This algorithm sorts quads from big to small and places them at the first
+ * possible location, testing for fit in a scan line pattern (left to right, top
+ * to bottom).
  *
- * @author Maconi This algorithm sorts quads from big to small and places them
- * at the first possible location, testing for fit in a scanline pattern (left
- * to right, top to bottom).
+ * @author Maconi
  */
 public class ScanlinePacker implements QuadPacker {
 
@@ -21,7 +22,7 @@ public class ScanlinePacker implements QuadPacker {
     }
 
     @Override
-    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) {
+    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception{
         ArrayList<Quad> output = new ArrayList<>();
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;
@@ -29,6 +30,9 @@ public class ScanlinePacker implements QuadPacker {
         int maxY = 0;
         Collections.sort(quads, Collections.reverseOrder());
         for (Quad quad : quads) {
+            if (quad.getWidth() > maxWidth){
+                throw new Exception("maxWidth too low to include" + quad.getName());
+            }
             int j = 0;
             while (true) {
                 quad.y = j;

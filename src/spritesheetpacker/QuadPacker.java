@@ -7,15 +7,15 @@ package spritesheetpacker;
 
 import java.util.ArrayList;
 
-
 /**
+ * Interface for all the packing algorithms in order to easily plug them into
+ * the main application
  *
  * @author Maconi
- * Interface for all the packing algorithms in order to easily plug them into the main application
+ *
  */
 public interface QuadPacker {
-    
-    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth);
-    
-    
+
+    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception;
+
 }

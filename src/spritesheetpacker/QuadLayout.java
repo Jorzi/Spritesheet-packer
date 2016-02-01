@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
+ * Wrapper class containing a list of Quad objects and their bounding box.
  *
  * @author Maconi
  */

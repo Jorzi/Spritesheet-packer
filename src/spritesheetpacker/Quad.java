@@ -8,12 +8,15 @@ package spritesheetpacker;
 import java.awt.Rectangle;
 
 /**
+ * A Quad contains the bounding box of an image. The name is used to identify
+ * which image it represents. Its x and y can be freely changed to move it
+ * around, but its height, width and name are read-only.
  *
  * @author Maconi
- * A Quad contains the bounding box of an image. Its name is used to identify which image it represents.
- * Its x and y can be freely changed to move it around, but its height, width and name are read-only.
+ *
  */
-public class Quad implements Comparable<Quad>{
+public class Quad implements Comparable<Quad> {
+
     public int x;
     public int y;
     private int width;
@@ -27,8 +30,8 @@ public class Quad implements Comparable<Quad>{
         this.height = height;
         this.name = name;
     }
-    
-    public Quad(Rectangle rect, String name){
+
+    public Quad(Rectangle rect, String name) {
         this(rect.x, rect.y, rect.width, rect.height, name);
     }
 
@@ -48,6 +51,5 @@ public class Quad implements Comparable<Quad>{
     public int compareTo(Quad t) {
         return this.width * this.height - (t.width * t.height);
     }
-    
 
 }
