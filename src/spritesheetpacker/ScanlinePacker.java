@@ -5,12 +5,15 @@
  */
 package spritesheetpacker;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 
 /**
  *
- * @author Maconi
+ * @author Maconi This algorithm sorts quads from big to small and places them
+ * at the first possible location, testing for fit in a scanline pattern (left
+ * to right, top to bottom).
  */
 public class ScanlinePacker implements QuadPacker {
 
@@ -18,9 +21,13 @@ public class ScanlinePacker implements QuadPacker {
     }
 
     @Override
-    public ArrayList<Quad> generateLayout(ArrayList<Quad> quads, int maxWidth) {
+    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) {
         ArrayList<Quad> output = new ArrayList<>();
-        Collections.sort(quads);
+        int minX = Integer.MAX_VALUE;
+        int minY = Integer.MAX_VALUE;
+        int maxX = 0;
+        int maxY = 0;
+        Collections.sort(quads, Collections.reverseOrder());
         for (Quad quad : quads) {
             int j = 0;
             while (true) {
@@ -36,13 +43,17 @@ public class ScanlinePacker implements QuadPacker {
                 }
                 if (quadFits) {
                     output.add(quad);
+                    minX = quad.x < minX ? quad.x : minX;
+                    minY = quad.y < minY ? quad.y : minY;
+                    maxX = quad.x + quad.getWidth() > maxX ? quad.x + quad.getWidth() : maxX;
+                    maxY = quad.y + quad.getHeight() > maxY ? quad.y + quad.getHeight() : maxY;
                     break;
                 }
                 j++;
             }
         }
 
-        return output;
+        return new QuadLayout(output, new Rectangle(minX, minY, maxX - minX, maxY - minY));
     }
 
     private boolean collisionDetection(Quad testQuad, ArrayList<Quad> quads) {

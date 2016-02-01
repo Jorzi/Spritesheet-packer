@@ -11,10 +11,11 @@ import java.util.ArrayList;
 /**
  *
  * @author Maconi
+ * Interface for all the packing algorithms in order to easily plug them into the main application
  */
 public interface QuadPacker {
     
-    public ArrayList<Quad> generateLayout(ArrayList<Quad> quads, int maxWidth);
+    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth);
     
     
 }

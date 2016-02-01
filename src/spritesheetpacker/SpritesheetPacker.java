@@ -6,11 +6,13 @@
 package spritesheetpacker;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 /**
@@ -20,7 +22,7 @@ import javax.imageio.ImageIO;
 public class SpritesheetPacker {
 
     /**
-     * @param args the command line arguments
+     * @param args optionally specify the source folder path
      */
     public static void main(String[] args) {
 
@@ -33,11 +35,11 @@ public class SpritesheetPacker {
         ArrayList<File> files = new ArrayList<>(Arrays.asList(f.listFiles()));
         ArrayList<File> imageFiles = imagesOnly(files);
         System.out.println(imageFiles);
-        ArrayList<BufferedImage> images = loadImages(imageFiles);
-        BufferedImage spriteSheet = naiveSpritesheetGenerator(images);
+        QuadPacker packer = new ScanlinePacker();
+        BufferedImage spriteSheet = generateSpritesheet(imageFiles, packer);
 
         File output = new File("output" + File.separator + "output.png");
-
+        
         try {
             if (!output.exists()) {
                 output.createNewFile();
@@ -83,6 +85,24 @@ public class SpritesheetPacker {
         for (BufferedImage image : images) {
             canvas.drawImage(image, displaceX, 0, null);
             displaceX += image.getWidth();
+        }
+        return spritesheet;
+    }
+    
+    public static BufferedImage generateSpritesheet(ArrayList<File> imageFiles, QuadPacker packer) {
+        int width = 1024;
+        ArrayList<BufferedImage> images = loadImages(imageFiles);
+        ArrayList<Quad> quads = new ArrayList<>();
+        for(int i = 0; i < images.size(); i++){
+            quads.add(new Quad(images.get(i).getData().getBounds(), imageFiles.get(i).getName()));
+        }
+        QuadLayout layout = packer.generateLayout(quads, width);
+        HashMap<String, Rectangle> mappings = layout.getMappings();
+        BufferedImage spritesheet = new BufferedImage(width, layout.bounds.height + layout.bounds.y, BufferedImage.TYPE_4BYTE_ABGR);
+        Graphics2D canvas = spritesheet.createGraphics();
+        for(int i = 0; i < images.size(); i++){
+            Rectangle coords = mappings.get(imageFiles.get(i).getName());
+            canvas.drawImage(images.get(i), coords.x, coords.y, null);
         }
         return spritesheet;
     }

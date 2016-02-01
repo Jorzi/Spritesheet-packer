@@ -5,10 +5,29 @@
  */
 package spritesheetpacker;
 
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  *
  * @author Maconi
  */
 public class QuadLayout {
+    public ArrayList<Quad> quads;
+    public Rectangle bounds;
+
+    public QuadLayout(ArrayList<Quad> quads, Rectangle bounds) {
+        this.quads = quads;
+        this.bounds = bounds;
+    }
+    
+    public HashMap<String, Rectangle> getMappings(){
+        HashMap<String, Rectangle> mapping = new HashMap<>();
+        for(Quad quad:quads){
+            mapping.put(quad.getName(), new Rectangle(quad.x, quad.y, quad.getWidth(), quad.getHeight()));
+        }
+        return mapping;
+    }
     
 }
