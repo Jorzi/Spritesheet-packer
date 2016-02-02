@@ -67,8 +67,9 @@ public class SpritesheetPackerTest {
         QuadPacker packer = null;
         int maxWidth = 0;
         BufferedImage expResult = null;
-        BufferedImage result = SpritesheetPacker.generateSpritesheet(imageFiles, packer, maxWidth);
-        assertEquals(expResult, result);
+        LayoutWriter writer = new SimpleLayoutWriter();
+        SpriteSheet result = SpritesheetPacker.generateSpritesheet(imageFiles, packer, writer, maxWidth);
+        assertEquals(expResult, result.image);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
