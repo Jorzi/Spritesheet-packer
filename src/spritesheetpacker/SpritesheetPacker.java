@@ -8,7 +8,9 @@ package spritesheetpacker;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,9 +43,10 @@ public class SpritesheetPacker {
 
         //load the images and create the sprite sheet
         QuadPacker packer = new ScanlinePacker();
-        BufferedImage spriteSheet;
+        LayoutWriter writer = new SimpleLayoutWriter();
+        SpriteSheet spriteSheet;
         try {
-            spriteSheet = generateSpritesheet(imageFiles, packer, 1024);
+            spriteSheet = generateSpritesheet(imageFiles, packer, writer, 1024);
         } catch (Exception ex) {
             System.out.println("Could not create the sprite sheet");
             return;
@@ -54,15 +57,27 @@ public class SpritesheetPacker {
         File outputFolder = new File(outputPath);
         outputFolder.mkdir();
         File output = new File("output" + File.separator + "output.png");
+        File outputText = new File("output" + File.separator + "output.txt");
 
         //write sprite sheet to output file
         try {
             if (!output.exists()) {
                 output.createNewFile();
             }
-            ImageIO.write(spriteSheet, "PNG", output);
+            ImageIO.write(spriteSheet.image, "PNG", output);
         } catch (IOException ex) {
             System.out.println("could not write image");
+        }
+        try {
+            if (!outputText.exists()) {
+                outputText.createNewFile();
+            }
+            FileWriter fileWriter = new FileWriter(outputText);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            bufferedWriter.write(spriteSheet.layout);
+            bufferedWriter.close();
+        } catch (IOException ex) {
+            System.out.println("could not write coordinates file");
         }
     }
 
@@ -103,7 +118,6 @@ public class SpritesheetPacker {
         return images;
     }
 
-
     /**
      * Loads the image data from the specified files using the specified
      * algorithm, limiting the stacking to the specified width.
@@ -111,17 +125,19 @@ public class SpritesheetPacker {
      * @param imageFiles list of files. Files that cannot be read as images are
      * not included in the result
      * @param packer algorithm implementing the QuadPacker interface
+     * @param writer
      * @param maxWidth specifies the horizontal pixel limit of the sprite sheet
      * @return the generated sprite sheet image
      * @throws java.lang.Exception if any of the images are wider than maxWidth
      */
-    public static BufferedImage generateSpritesheet(ArrayList<File> imageFiles, QuadPacker packer, int maxWidth) throws Exception{
+    public static SpriteSheet generateSpritesheet(ArrayList<File> imageFiles, QuadPacker packer, LayoutWriter writer, int maxWidth) throws Exception {
         ArrayList<BufferedImage> images = loadImages(imageFiles);
         ArrayList<Quad> quads = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
             quads.add(new Quad(images.get(i).getData().getBounds(), imageFiles.get(i).getName()));
         }
         QuadLayout layout = packer.generateLayout(quads, maxWidth);
+        String layoutString = writer.WriteLayout(layout);
         HashMap<String, Rectangle> mappings = layout.getMappings();
         int height = layout.bounds.height + layout.bounds.y;
         BufferedImage spritesheet = new BufferedImage(maxWidth, height, BufferedImage.TYPE_4BYTE_ABGR);
@@ -130,7 +146,7 @@ public class SpritesheetPacker {
             Rectangle coords = mappings.get(imageFiles.get(i).getName());
             canvas.drawImage(images.get(i), coords.x, coords.y, null);
         }
-        return spritesheet;
+        return new SpriteSheet(spritesheet, layoutString);
     }
 
     /**
