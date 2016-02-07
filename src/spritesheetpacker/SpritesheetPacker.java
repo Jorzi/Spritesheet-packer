@@ -31,9 +31,28 @@ public class SpritesheetPacker {
      */
     public static void main(String[] args) {
 
+        //Default parameters
         String filePath = ".";
+        String outputPath = "output";
+        int width = 1024;
+        boolean powerOfTwo = false;
+        
+        //Parse command line arguments
         if (args.length > 0) {
-            filePath = args[0];
+            for (String arg:args){
+                if(arg.startsWith("source=")){
+                    filePath = arg.split("=")[1];
+                }
+                else if(arg.startsWith("output=")){
+                    outputPath = arg.split("=")[1];
+                }
+                else if(arg.startsWith("width=")){
+                    width = Integer.parseInt(arg.split("=")[1]);
+                }
+                else if(arg.equals("-po2")){
+                    powerOfTwo = true;
+                }
+            }
         }
         //scan the selected folder for files
         File f = new File(filePath);
@@ -46,14 +65,21 @@ public class SpritesheetPacker {
         LayoutWriter writer = new SimpleLayoutWriter();
         SpriteSheet spriteSheet;
         try {
-            spriteSheet = generateSpritesheet(imageFiles, packer, writer, 1024);
+            spriteSheet = generateSpritesheet(imageFiles, packer, writer, width);
         } catch (Exception ex) {
             System.out.println("Could not create the sprite sheet");
             return;
         }
+        //resize if specified
+        if(powerOfTwo){
+            int newWidth = getPowerOfTwo(spriteSheet.image.getWidth());
+            int newHeight = getPowerOfTwo(spriteSheet.image.getHeight());
+            BufferedImage resizeImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);
+            resizeImage.setData(spriteSheet.image.getData());
+            spriteSheet.image = resizeImage;
+        }
 
         //create the output path
-        String outputPath = "output";
         File outputFolder = new File(outputPath);
         outputFolder.mkdir();
         File output = new File("output" + File.separator + "output.png");
