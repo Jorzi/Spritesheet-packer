@@ -16,6 +16,15 @@ import java.util.ArrayList;
  */
 public interface QuadPacker {
 
+    /**
+     *
+     * @param quads List of bounding boxes for the images
+     * @param maxWidth Maximum bounds in the x direction. No part of the final
+     * layout can extend beyond this limit
+     * @return A QuadLayout object containing all the quads, stacked without
+     * overlap, as well as the bounding rectangle of the whole layout
+     * @throws Exception if maxWidth is too small to accomodate all images
+     */
     public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception;
 
 }

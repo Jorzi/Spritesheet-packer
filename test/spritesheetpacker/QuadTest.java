@@ -51,6 +51,5 @@ public class QuadTest {
         instance = new Quad(5, 10, 200, 50, "Test2");
         result = instance.compareTo(t);
         assertEquals(0, result);
-    }
-    
+    } 
 }

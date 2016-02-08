@@ -18,11 +18,24 @@ import java.util.Collections;
  */
 public class ScanlinePacker implements QuadPacker {
 
+    /**
+     * Default constructor
+     */
     public ScanlinePacker() {
     }
 
+    /**
+     * Generates a layout using the scanline algorithm.
+     *
+     * @param quads List of bounding boxes for the images
+     * @param maxWidth Maximum bounds in the x direction. No part of the final
+     * layout can extend beyond this limit
+     * @return A QuadLayout object containing all the quads, stacked without
+     * overlap, as well as the bounding rectangle of the whole layout
+     * @throws Exception if maxWidth is too small to accomodate all images
+     */
     @Override
-    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception{
+    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception {
         ArrayList<Quad> output = new ArrayList<>();
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;
@@ -30,7 +43,7 @@ public class ScanlinePacker implements QuadPacker {
         int maxY = 0;
         Collections.sort(quads, Collections.reverseOrder());
         for (Quad quad : quads) {
-            if (quad.getWidth() > maxWidth){
+            if (quad.getWidth() > maxWidth) {
                 throw new Exception("maxWidth too low to include" + quad.getName());
             }
             int j = 0;

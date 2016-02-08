@@ -6,14 +6,26 @@
 package spritesheetpacker;
 
 /**
- *
+ * A simple way of producing a text containing all the information needed to
+ * reproduce the Quad layout in another program
  * @author Maconi
  */
 public class SimpleLayoutWriter implements LayoutWriter {
 
+    /**
+     * Default constructor
+     */
     public SimpleLayoutWriter() {
     }
 
+    /**
+     * Write a layout description based on a generated quad layout. 
+     * The first line contains bounding box information. 
+     * Its format will be "Bounds x y width height"
+     * The rest of the lines will be "imageName x y width height"
+     * @param layout
+     * @return
+     */
     @Override
     public String WriteLayout(QuadLayout layout) {
         StringBuilder output = new StringBuilder();

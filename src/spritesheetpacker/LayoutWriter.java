@@ -11,6 +11,11 @@ package spritesheetpacker;
  */
 public interface LayoutWriter {
     
+    /**
+     *
+     * @param layout
+     * @return
+     */
     public String WriteLayout(QuadLayout layout);
     
 }

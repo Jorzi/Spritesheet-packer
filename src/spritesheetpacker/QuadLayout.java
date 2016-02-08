@@ -15,14 +15,31 @@ import java.util.HashMap;
  * @author Maconi
  */
 public class QuadLayout {
+
+    /**
+     * List of quads and their positions
+     */
     public ArrayList<Quad> quads;
+
+    /**
+     * Bounding rectangle of all quads combined
+     */
     public Rectangle bounds;
 
+    /**
+     *
+     * @param quads List of quads
+     * @param bounds Bounding rectangle of all quads combined
+     */
     public QuadLayout(ArrayList<Quad> quads, Rectangle bounds) {
         this.quads = quads;
         this.bounds = bounds;
     }
     
+    /**
+     * Converts the list of quads into a hash map, so that quads can be easily accessed by their name
+     * @return A hash map of rectangles with quad names as keys
+     */
     public HashMap<String, Rectangle> getMappings(){
         HashMap<String, Rectangle> mapping = new HashMap<>();
         for(Quad quad:quads){

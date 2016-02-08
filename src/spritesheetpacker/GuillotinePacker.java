@@ -17,14 +17,26 @@ public class GuillotinePacker implements QuadPacker {
 
     private LinkedList<Rectangle> freeQuads;
 
+    /**
+     * Default constructor
+     */
     public GuillotinePacker() {
     }
 
+    /**
+     *
+     * @param quads List of bounding boxes for the images
+     * @param maxWidth Maximum bounds in the x direction. No part of the final
+     * layout can extend beyond this limit
+     * @return A QuadLayout object containing all the quads, stacked without
+     * overlap, as well as the bounding rectangle of the whole layout
+     * @throws Exception if maxWidth is too small to accomodate all images
+     */
     @Override
     public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception {
         //reset list, add initial bounds
         freeQuads = new LinkedList<>();
-        freeQuads.add(new Rectangle(maxWidth, Integer.MAX_VALUE)); 
+        freeQuads.add(new Rectangle(maxWidth, Integer.MAX_VALUE));
         ArrayList<Quad> output = new ArrayList<>();
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;

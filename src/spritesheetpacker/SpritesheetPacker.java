@@ -27,7 +27,13 @@ import javax.imageio.ImageIO;
 public class SpritesheetPacker {
 
     /**
-     * @param args optionally specify the source folder path
+     * @param args the available command line arguments are:
+     * source=folder_path specifies the path to the folder containing the sprites
+     * output=folder_path specifies the folder in which to save the result
+     * width=N specifies a maximum horizontal resolution of N (1024 default)
+     * -po2 forces power-of-two dimensions on the output
+     * -scanline specifies that the scanline algorithm will be used
+     * -guillotine specifies that the guillotine algorithm will be used
      */
     public static void main(String[] args) {
 
@@ -36,21 +42,23 @@ public class SpritesheetPacker {
         String outputPath = "output";
         int width = 1024;
         boolean powerOfTwo = false;
-        
+        QuadPacker packer = new GuillotinePacker();
+
         //Parse command line arguments
         if (args.length > 0) {
-            for (String arg:args){
-                if(arg.startsWith("source=")){
+            for (String arg : args) {
+                if (arg.startsWith("source=")) {
                     filePath = arg.split("=")[1];
-                }
-                else if(arg.startsWith("output=")){
+                } else if (arg.startsWith("output=")) {
                     outputPath = arg.split("=")[1];
-                }
-                else if(arg.startsWith("width=")){
+                } else if (arg.startsWith("width=")) {
                     width = Integer.parseInt(arg.split("=")[1]);
-                }
-                else if(arg.equals("-po2")){
+                } else if (arg.equals("-po2")) {
                     powerOfTwo = true;
+                } else if (arg.equals("-scanline")) {
+                    packer = new ScanlinePacker();
+                } else if (arg.equals("-guillotine")) {
+                    packer = new GuillotinePacker();
                 }
             }
         }
@@ -61,7 +69,6 @@ public class SpritesheetPacker {
         System.out.println(imageFiles);
 
         //load the images and create the sprite sheet
-        QuadPacker packer = new GuillotinePacker();
         LayoutWriter writer = new SimpleLayoutWriter();
         SpriteSheet spriteSheet;
         try {
@@ -71,7 +78,7 @@ public class SpritesheetPacker {
             return;
         }
         //resize if specified
-        if(powerOfTwo){
+        if (powerOfTwo) {
             int newWidth = getPowerOfTwo(spriteSheet.image.getWidth());
             int newHeight = getPowerOfTwo(spriteSheet.image.getHeight());
             BufferedImage resizeImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_4BYTE_ABGR);
@@ -82,8 +89,8 @@ public class SpritesheetPacker {
         //create the output path
         File outputFolder = new File(outputPath);
         outputFolder.mkdir();
-        File output = new File("output" + File.separator + "output.png");
-        File outputText = new File("output" + File.separator + "output.txt");
+        File output = new File(outputPath + File.separator + "output.png");
+        File outputText = new File(outputPath + File.separator + "output.txt");
 
         //write sprite sheet to output file
         try {

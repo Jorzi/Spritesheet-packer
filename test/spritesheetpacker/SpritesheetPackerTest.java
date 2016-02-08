@@ -94,4 +94,18 @@ public class SpritesheetPackerTest {
         assertEquals(512, result);
     }
 
+    /**
+     * Test of loadImages method, of class SpritesheetPacker.
+     */
+    @Test
+    public void testLoadImages() {
+        System.out.println("loadImages");
+        ArrayList<File> files = null;
+        ArrayList<BufferedImage> expResult = null;
+        ArrayList<BufferedImage> result = SpritesheetPacker.loadImages(files);
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
 }
