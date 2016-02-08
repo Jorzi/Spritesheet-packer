@@ -61,7 +61,7 @@ public class SpritesheetPacker {
         System.out.println(imageFiles);
 
         //load the images and create the sprite sheet
-        QuadPacker packer = new ScanlinePacker();
+        QuadPacker packer = new GuillotinePacker();
         LayoutWriter writer = new SimpleLayoutWriter();
         SpriteSheet spriteSheet;
         try {
