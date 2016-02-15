@@ -40,9 +40,9 @@ public class SpritesheetPacker {
         //Default parameters
         String filePath = ".";
         String outputPath = "output";
-        int width = 1024;
+        int width = 256;
         boolean powerOfTwo = false;
-        QuadPacker packer = new GuillotinePacker();
+        QuadPacker packer = new MaxRectsPacker();
 
         //Parse command line arguments
         if (args.length > 0) {
@@ -74,7 +74,7 @@ public class SpritesheetPacker {
         try {
             spriteSheet = generateSpritesheet(imageFiles, packer, writer, width);
         } catch (Exception ex) {
-            System.out.println("Could not create the sprite sheet");
+            System.out.println("Could not create the sprite sheet; " + ex.getMessage());
             return;
         }
         //resize if specified
