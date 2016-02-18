@@ -49,9 +49,10 @@ public class MaxRectsPacker implements QuadPacker {
             Rectangle freeArea = getBestFreeArea(quad);
             quad.x = freeArea.x;
             quad.y = freeArea.y;
-            splitFreeArea(freeArea, quad);
+            //splitFreeArea(freeArea, quad);
             ArrayList<Rectangle> splitRects = new ArrayList<>();
-            for (int i = 0; i < freeQuads.size(); i++) {
+            int size = freeQuads.size();
+            for (int i = 0; i < size; i++) {
                 if(splitFreeArea(freeQuads.get(i), quad)){
                     splitRects.add(freeQuads.get(i));
                 }    
@@ -59,6 +60,7 @@ public class MaxRectsPacker implements QuadPacker {
             for (Rectangle rect:splitRects){
                 freeQuads.remove(rect);
             }
+            pruneFreeAreas();
             output.add(quad);
 
             minX = quad.x < minX ? quad.x : minX;
@@ -144,6 +146,30 @@ public class MaxRectsPacker implements QuadPacker {
         }
 
         return false;
+    }
+    
+    private boolean isInside(Rectangle rect1, Rectangle rect2){
+        //1 2
+        //3 4
+        boolean corner1 = rect1.x >= rect2.x && rect1.y >= rect2.y;
+        boolean corner2 = rect1.x + rect1.width <= rect2.x + rect2.width;
+        boolean corner3 = rect1.y + rect1.height <= rect2.y + rect2.height;
+        return corner1 && corner2 && corner3;
+    }
+    
+    private void pruneFreeAreas(){
+        ArrayList<Rectangle> unnecessaryRects = new ArrayList<>();
+        for(Rectangle rect1 : freeQuads){
+            for(Rectangle rect2 : freeQuads){
+                if(isInside(rect1, rect2) && rect1 != rect2){
+                    unnecessaryRects.add(rect1);
+                    break;
+                }
+            }
+        }
+        for(Rectangle rect: unnecessaryRects){
+            freeQuads.remove(rect);
+        }
     }
 
 }

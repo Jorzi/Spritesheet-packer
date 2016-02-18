@@ -40,7 +40,7 @@ public class SpritesheetPacker {
         //Default parameters
         String filePath = ".";
         String outputPath = "output";
-        int width = 256;
+        int width = 1024;
         boolean powerOfTwo = false;
         QuadPacker packer = new MaxRectsPacker();
 
