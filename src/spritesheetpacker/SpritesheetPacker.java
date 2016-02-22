@@ -5,6 +5,7 @@
  */
 package spritesheetpacker;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -25,6 +26,8 @@ import javax.imageio.ImageIO;
  * @author Maconi
  */
 public class SpritesheetPacker {
+    
+    public static boolean quadOutlines = false;
 
     /**
      * @param args the available command line arguments are:
@@ -34,6 +37,7 @@ public class SpritesheetPacker {
      * -po2 forces power-of-two dimensions on the output
      * -scanline specifies that the scanline algorithm will be used
      * -guillotine specifies that the guillotine algorithm will be used
+     * -outlines makes the program draw quad outlines for debug purposes
      */
     public static void main(String[] args) {
 
@@ -59,7 +63,10 @@ public class SpritesheetPacker {
                     packer = new ScanlinePacker();
                 } else if (arg.equals("-guillotine")) {
                     packer = new GuillotinePacker();
+                } else if (arg.equals("-outlines")) {
+                    quadOutlines = true;
                 }
+                
             }
         }
         //scan the selected folder for files
@@ -178,6 +185,20 @@ public class SpritesheetPacker {
         for (int i = 0; i < images.size(); i++) {
             Rectangle coords = mappings.get(imageFiles.get(i).getName());
             canvas.drawImage(images.get(i), coords.x, coords.y, null);
+            if (quadOutlines){
+                canvas.setColor(Color.red);
+                canvas.drawRect(coords.x, coords.y, coords.width-1, coords.height-1);
+                String number = "" + i;
+                canvas.drawString(number, coords.x, coords.y + coords.height);
+                
+            }
+        }
+        if(quadOutlines && packer.getClass() == MaxRectsPacker.class){
+            canvas.setColor(Color.green);
+            MaxRectsPacker blah = (MaxRectsPacker)packer;
+            for (Rectangle rect : blah.getFreeQuads()){
+                canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
+            }
         }
         return new SpriteSheet(spritesheet, layoutString);
     }

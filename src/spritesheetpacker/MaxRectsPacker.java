@@ -15,11 +15,10 @@ import java.util.LinkedList;
  */
 public class MaxRectsPacker implements QuadPacker {
 
-    private ArrayList<Quad> usedQuads;
     private LinkedList<Rectangle> freeQuads;
 
     /**
-     *
+     * Default constructor
      */
     public MaxRectsPacker() {
     }
@@ -71,44 +70,31 @@ public class MaxRectsPacker implements QuadPacker {
         }
         return new QuadLayout(output, new Rectangle(minX, minY, maxX - minX, maxY - minY));
     }
-
-    //from guillotine algorithm, to be phased out
-    private void split(Rectangle freeArea, Quad quad) {
-        int x1 = freeArea.x + quad.getWidth();
-        int y1 = freeArea.y;
-        int x2 = freeArea.x;
-        int y2 = freeArea.y + quad.getHeight();
-
-        Rectangle rect1;
-        Rectangle rect2;
-        rect1 = new Rectangle(x1, y1, freeArea.width - quad.getWidth(), freeArea.height);
-        rect2 = new Rectangle(x2, y2, freeArea.width, freeArea.height - quad.getHeight());
-
-        freeQuads.remove(freeArea);
-        freeQuads.add(rect1);
-        freeQuads.add(rect2);
-    }
     
     private boolean splitFreeArea(Rectangle freeArea, Quad quad) {
         if (!collisionDetection(quad, freeArea)) {
             return false; //rectangle wasnt't split and doesn't need to be deleted
         }
-        if (quad.y > freeArea.y && quad.y < freeArea.y + freeArea.width) {
+        // free area above quad
+        if (quad.y > freeArea.y) {
             Rectangle newRect = new Rectangle(freeArea);
             newRect.height = quad.y - newRect.y;
             freeQuads.add(newRect);
         }
+        // free area below quad
         if (quad.y + quad.getHeight() < freeArea.y + freeArea.height) {
             Rectangle newRect = new Rectangle(freeArea);
             newRect.y = quad.y + quad.getHeight();
             newRect.height = freeArea.y + freeArea.height - newRect.y;
             freeQuads.add(newRect);
         }
-        if (quad.x > freeArea.x && quad.x < freeArea.x + freeArea.width) {
+        // free area to the left of the quad
+        if (quad.x > freeArea.x) {
             Rectangle newRect = new Rectangle(freeArea);
             newRect.width = quad.getWidth() + newRect.x;
             freeQuads.add(newRect);
         }
+        // free area to the right of the quad
         if (quad.x + quad.getWidth() < freeArea.x + freeArea.width) {
             Rectangle newRect = new Rectangle(freeArea);
             newRect.x = quad.x + quad.getWidth();
@@ -123,14 +109,15 @@ public class MaxRectsPacker implements QuadPacker {
     }
 
     private Rectangle getBestFreeArea(Quad quad) {
-        //current heuristic: minimize difference in width
+        //current heuristic: minimize difference in the shorter side
         //TODO: add possibility to change heuristic
-        int bestWidth = Integer.MAX_VALUE;
+        long bestWidth = Integer.MAX_VALUE;
         Rectangle currentRect = freeQuads.getFirst();
         for (Rectangle rect : freeQuads) {
-            if (rect.width < bestWidth && quadFits(quad, rect)) {
+            int shortSide = Math.min(rect.width - quad.getWidth(), rect.height - quad.getHeight());
+            if (shortSide < bestWidth && quadFits(quad, rect)) {
                 currentRect = rect;
-                bestWidth = rect.width;
+                bestWidth = shortSide;
             }
         }
         return currentRect;
@@ -171,5 +158,11 @@ public class MaxRectsPacker implements QuadPacker {
             freeQuads.remove(rect);
         }
     }
+
+    public LinkedList<Rectangle> getFreeQuads() {
+        return freeQuads;
+    }
+    
+    
 
 }
