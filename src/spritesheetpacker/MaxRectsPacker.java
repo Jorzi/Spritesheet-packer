@@ -91,7 +91,7 @@ public class MaxRectsPacker implements QuadPacker {
         // free area to the left of the quad
         if (quad.x > freeArea.x) {
             Rectangle newRect = new Rectangle(freeArea);
-            newRect.width = quad.getWidth() + newRect.x;
+            newRect.width = quad.x - newRect.x;
             freeQuads.add(newRect);
         }
         // free area to the right of the quad
