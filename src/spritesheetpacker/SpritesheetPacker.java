@@ -37,6 +37,7 @@ public class SpritesheetPacker {
      * -po2 forces power-of-two dimensions on the output
      * -scanline specifies that the scanline algorithm will be used
      * -guillotine specifies that the guillotine algorithm will be used
+     * -maxrects specifies that the maxRects algorithm will be used
      * -outlines makes the program draw quad outlines for debug purposes
      */
     public static void main(String[] args) {
@@ -63,6 +64,8 @@ public class SpritesheetPacker {
                     packer = new ScanlinePacker();
                 } else if (arg.equals("-guillotine")) {
                     packer = new GuillotinePacker();
+                    } else if (arg.equals("-maxrects")) {
+                    packer = new MaxRectsPacker();
                 } else if (arg.equals("-outlines")) {
                     quadOutlines = true;
                 }

@@ -159,6 +159,10 @@ public class MaxRectsPacker implements QuadPacker {
         }
     }
 
+    /**
+     *
+     * @return List of rectangles representing the free space left in the sprite sheet
+     */
     public LinkedList<Rectangle> getFreeQuads() {
         return freeQuads;
     }

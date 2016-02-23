@@ -5,7 +5,9 @@
  */
 package spritesheetpacker;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -44,14 +46,22 @@ public class MaxRectsPackerTest {
     @Test
     public void testGenerateLayout() throws Exception {
         System.out.println("generateLayout");
-        ArrayList<Quad> quads = null;
-        int maxWidth = 0;
+        ArrayList<Quad> quads = new ArrayList<>();
+        quads.add(new Quad(0,0, 100, 200, "test1"));
+        quads.add(new Quad(0,0, 150, 175, "test2"));
+        int maxWidth = 1024;
         MaxRectsPacker instance = new MaxRectsPacker();
-        QuadLayout expResult = null;
         QuadLayout result = instance.generateLayout(quads, maxWidth);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(200, result.bounds.height);
+        assertEquals(250, result.bounds.width);
+        assertEquals(2, result.quads.size());
+        boolean throwException = false;
+        try{
+            result = instance.generateLayout(quads, 149);
+        }catch(Exception e){
+            throwException = true;
+        }
+        assertEquals(true, throwException);
     }
     
 }
