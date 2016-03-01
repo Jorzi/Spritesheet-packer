@@ -180,6 +180,7 @@ public class SpritesheetPacker {
             quads.add(new Quad(images.get(i).getData().getBounds(), imageFiles.get(i).getName()));
         }
         QuadLayout layout = packer.generateLayout(quads, maxWidth);
+        System.out.println("Packing ratio: " + getPackingRatio(layout));
         String layoutString = writer.WriteLayout(layout);
         HashMap<String, Rectangle> mappings = layout.getMappings();
         int height = layout.bounds.height + layout.bounds.y;
@@ -203,6 +204,13 @@ public class SpritesheetPacker {
                 canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
             }
         }
+        if(quadOutlines && packer.getClass() == GuillotinePacker.class){
+            canvas.setColor(Color.green);
+            GuillotinePacker blah = (GuillotinePacker)packer;
+            for (Rectangle rect : blah.getFreeQuads()){
+                canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
+            }
+        }
         return new SpriteSheet(spritesheet, layoutString);
     }
 
@@ -215,5 +223,14 @@ public class SpritesheetPacker {
     public static int getPowerOfTwo(int input) {
         int exponent = (int) Math.ceil(Math.log(input) / Math.log(2));
         return (int) Math.pow(2, exponent);
+    }
+    
+    public static double getPackingRatio(QuadLayout layout){
+        int areaSum = 0;
+        int boundingArea = layout.bounds.height * layout.bounds.width;
+        for(Quad quad:layout.quads){
+            areaSum += quad.getHeight() * quad.getWidth();
+        }
+        return 1.0 * areaSum / boundingArea;
     }
 }

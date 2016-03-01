@@ -13,3 +13,9 @@ In order to control the dimensions of the generated sprite sheet, a maximum widt
 Most 2d bin packing implementations start with a fixed size sprite sheet (often referred to as the bin), resizing it every time the bin is unable to contain all rectangles, or just assuming that the bin is large enough.
 The implementation presented here, on the other hand, uses a bin of (practically) infinite depth, packing downwards from the upper-left corner, then cutting the bin depth to a minimum once all the rectangles are contained within the bin.
 This gives the user the possibility to adjust the ratio of width and height, while eliminating the need for any resizing of the bin.
+
+
+References
+----------
+
+Jukka Jyllänki, 2010, A Thousand Ways to Pack the Bin - A Practical Approach to Two-Dimensional Rectangle Bin Packing
