@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static spritesheetpacker.SpritesheetPacker.loadImages;
 
 /**
  *
@@ -63,15 +64,15 @@ public class SpritesheetPackerTest {
     @Test
     public void testGenerateSpritesheet() throws Exception {
         System.out.println("generateSpritesheet");
-        ArrayList<File> imageFiles = null;
-        QuadPacker packer = null;
-        int maxWidth = 0;
-        BufferedImage expResult = null;
+        ArrayList<File> imageFiles = new ArrayList<>();
+        imageFiles.add(new File("test_images" + File.separator + "cliff_flat_1.png"));
+        QuadPacker packer = new ScanlinePacker();
+        int maxWidth = 1024;
+        BufferedImage expResult = loadImages(imageFiles).get(0);
         LayoutWriter writer = new SimpleLayoutWriter();
         SpriteSheet result = SpritesheetPacker.generateSpritesheet(imageFiles, packer, writer, maxWidth);
-        assertEquals(expResult, result.image);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertEquals(expResult.getHeight(), result.image.getHeight());
+        assertEquals(maxWidth, result.image.getWidth());
     }
 
     /**
@@ -94,18 +95,5 @@ public class SpritesheetPackerTest {
         assertEquals(512, result);
     }
 
-    /**
-     * Test of loadImages method, of class SpritesheetPacker.
-     */
-    @Test
-    public void testLoadImages() {
-        System.out.println("loadImages");
-        ArrayList<File> files = null;
-        ArrayList<BufferedImage> expResult = null;
-        ArrayList<BufferedImage> result = SpritesheetPacker.loadImages(files);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
 }
