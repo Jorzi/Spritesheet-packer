@@ -41,8 +41,9 @@ public class ScanlinePacker implements QuadPacker {
         int minY = Integer.MAX_VALUE;
         int maxX = 0;
         int maxY = 0;
-        Collections.sort(quads, Collections.reverseOrder());
-        for (Quad quad : quads) {
+        ArrayList<Quad>quads2 = (ArrayList<Quad>)quads.clone();
+        Collections.sort(quads2, Collections.reverseOrder());
+        for (Quad quad : quads2) {
             if (quad.getWidth() > maxWidth) {
                 throw new Exception("maxWidth too low to include" + quad.getName());
             }
@@ -60,6 +61,7 @@ public class ScanlinePacker implements QuadPacker {
                 }
                 if (quadFits) {
                     output.add(quad);
+                    //System.out.println(output.size());
                     minX = quad.x < minX ? quad.x : minX;
                     minY = quad.y < minY ? quad.y : minY;
                     maxX = quad.x + quad.getWidth() > maxX ? quad.x + quad.getWidth() : maxX;

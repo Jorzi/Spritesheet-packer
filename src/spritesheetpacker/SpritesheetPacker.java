@@ -26,19 +26,20 @@ import javax.imageio.ImageIO;
  * @author Maconi
  */
 public class SpritesheetPacker {
-    
+
     public static boolean quadOutlines = false;
 
     /**
-     * @param args the available command line arguments are:
-     * source=folder_path specifies the path to the folder containing the sprites
+     * @param args the available command line arguments are: source=folder_path
+     * specifies the path to the folder containing the sprites
      * output=folder_path specifies the folder in which to save the result
      * width=N specifies a maximum horizontal resolution of N (1024 default)
-     * -po2 forces power-of-two dimensions on the output
-     * -scanline specifies that the scanline algorithm will be used
-     * -guillotine specifies that the guillotine algorithm will be used
-     * -maxrects specifies that the maxRects algorithm will be used
-     * -outlines makes the program draw quad outlines for debug purposes
+     * -po2 forces power-of-two dimensions on the output -scanline specifies
+     * that the scanline algorithm will be used -guillotine specifies that the
+     * guillotine algorithm will be used -maxrects specifies that the maxRects
+     * algorithm will be used -outlines makes the program draw quad outlines for
+     * debug purposes -benchmark makes the program compare algorithms,
+     * generating test output
      */
     public static void main(String[] args) {
 
@@ -48,6 +49,7 @@ public class SpritesheetPacker {
         int width = 1024;
         boolean powerOfTwo = false;
         QuadPacker packer = new MaxRectsPacker();
+        boolean benchmark = false;
 
         //Parse command line arguments
         if (args.length > 0) {
@@ -64,13 +66,19 @@ public class SpritesheetPacker {
                     packer = new ScanlinePacker();
                 } else if (arg.equals("-guillotine")) {
                     packer = new GuillotinePacker();
-                    } else if (arg.equals("-maxrects")) {
+                } else if (arg.equals("-maxrects")) {
                     packer = new MaxRectsPacker();
                 } else if (arg.equals("-outlines")) {
                     quadOutlines = true;
+                } else if (arg.equals("-benchmark")) {
+                    benchmark = true;
                 }
-                
+
             }
+        }
+        if (benchmark) {
+            performancetest.PackerComparison.runTest(500, 0, width, outputPath);
+            return;
         }
         //scan the selected folder for files
         File f = new File(filePath);
@@ -189,25 +197,25 @@ public class SpritesheetPacker {
         for (int i = 0; i < images.size(); i++) {
             Rectangle coords = mappings.get(imageFiles.get(i).getName());
             canvas.drawImage(images.get(i), coords.x, coords.y, null);
-            if (quadOutlines){
+            if (quadOutlines) {
                 canvas.setColor(Color.red);
-                canvas.drawRect(coords.x, coords.y, coords.width-1, coords.height-1);
+                canvas.drawRect(coords.x, coords.y, coords.width - 1, coords.height - 1);
                 String number = "" + i;
                 canvas.drawString(number, coords.x, coords.y + coords.height);
-                
+
             }
         }
-        if(quadOutlines && packer.getClass() == MaxRectsPacker.class){
+        if (quadOutlines && packer.getClass() == MaxRectsPacker.class) {
             canvas.setColor(Color.green);
-            MaxRectsPacker blah = (MaxRectsPacker)packer;
-            for (Rectangle rect : blah.getFreeQuads()){
+            MaxRectsPacker blah = (MaxRectsPacker) packer;
+            for (Rectangle rect : blah.getFreeQuads()) {
                 canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
             }
         }
-        if(quadOutlines && packer.getClass() == GuillotinePacker.class){
+        if (quadOutlines && packer.getClass() == GuillotinePacker.class) {
             canvas.setColor(Color.green);
-            GuillotinePacker blah = (GuillotinePacker)packer;
-            for (Rectangle rect : blah.getFreeQuads()){
+            GuillotinePacker blah = (GuillotinePacker) packer;
+            for (Rectangle rect : blah.getFreeQuads()) {
                 canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
             }
         }
@@ -224,11 +232,11 @@ public class SpritesheetPacker {
         int exponent = (int) Math.ceil(Math.log(input) / Math.log(2));
         return (int) Math.pow(2, exponent);
     }
-    
-    public static double getPackingRatio(QuadLayout layout){
+
+    public static double getPackingRatio(QuadLayout layout) {
         int areaSum = 0;
         int boundingArea = layout.bounds.height * layout.bounds.width;
-        for(Quad quad:layout.quads){
+        for (Quad quad : layout.quads) {
             areaSum += quad.getHeight() * quad.getWidth();
         }
         return 1.0 * areaSum / boundingArea;
