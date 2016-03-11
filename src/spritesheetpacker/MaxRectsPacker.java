@@ -8,6 +8,7 @@ package spritesheetpacker;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import utils.CustomLinkedList;
 
 /**
  *
@@ -15,7 +16,7 @@ import java.util.LinkedList;
  */
 public class MaxRectsPacker implements QuadPacker {
 
-    private LinkedList<Rectangle> freeQuads;
+    private CustomLinkedList<Rectangle> freeQuads;
 
     /**
      * Default constructor
@@ -34,8 +35,8 @@ public class MaxRectsPacker implements QuadPacker {
      */
     @Override
     public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception {
-        freeQuads = new LinkedList<>();
-        freeQuads.add(new Rectangle(maxWidth, Integer.MAX_VALUE));
+        freeQuads = new CustomLinkedList<>();
+        freeQuads.addLast(new Rectangle(maxWidth, Integer.MAX_VALUE));
         ArrayList<Quad> output = new ArrayList<>();
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;
@@ -48,16 +49,15 @@ public class MaxRectsPacker implements QuadPacker {
             Rectangle freeArea = getBestFreeArea(quad);
             quad.x = freeArea.x;
             quad.y = freeArea.y;
-            //splitFreeArea(freeArea, quad);
-            ArrayList<Rectangle> splitRects = new ArrayList<>();
-            int size = freeQuads.size();
+
+            int size = freeQuads.size;
+            freeQuads.goToFirst();
             for (int i = 0; i < size; i++) {
-                if(splitFreeArea(freeQuads.get(i), quad)){
-                    splitRects.add(freeQuads.get(i));
-                }    
-            }
-            for (Rectangle rect:splitRects){
-                freeQuads.remove(rect);
+                if (splitFreeArea(freeQuads.getActive(), quad)) {
+                    freeQuads.removeActive();
+                } else {
+                    freeQuads.goToNext();
+                }
             }
             pruneFreeAreas();
             output.add(quad);
@@ -70,7 +70,7 @@ public class MaxRectsPacker implements QuadPacker {
         }
         return new QuadLayout(output, new Rectangle(minX, minY, maxX - minX, maxY - minY));
     }
-    
+
     private boolean splitFreeArea(Rectangle freeArea, Quad quad) {
         if (!collisionDetection(quad, freeArea)) {
             return false; //rectangle wasnt't split and doesn't need to be deleted
@@ -79,27 +79,27 @@ public class MaxRectsPacker implements QuadPacker {
         if (quad.y > freeArea.y) {
             Rectangle newRect = new Rectangle(freeArea);
             newRect.height = quad.y - newRect.y;
-            freeQuads.add(newRect);
+            freeQuads.addLast(newRect);
         }
         // free area below quad
         if (quad.y + quad.getHeight() < freeArea.y + freeArea.height) {
             Rectangle newRect = new Rectangle(freeArea);
             newRect.y = quad.y + quad.getHeight();
             newRect.height = freeArea.y + freeArea.height - newRect.y;
-            freeQuads.add(newRect);
+            freeQuads.addLast(newRect);
         }
         // free area to the left of the quad
         if (quad.x > freeArea.x) {
             Rectangle newRect = new Rectangle(freeArea);
             newRect.width = quad.x - newRect.x;
-            freeQuads.add(newRect);
+            freeQuads.addLast(newRect);
         }
         // free area to the right of the quad
         if (quad.x + quad.getWidth() < freeArea.x + freeArea.width) {
             Rectangle newRect = new Rectangle(freeArea);
             newRect.x = quad.x + quad.getWidth();
             newRect.width = freeArea.x + freeArea.width - newRect.x;
-            freeQuads.add(newRect);
+            freeQuads.addLast(newRect);
         }
         return true;
     }
@@ -112,8 +112,11 @@ public class MaxRectsPacker implements QuadPacker {
         //current heuristic: minimize difference in the shorter side
         //TODO: add possibility to change heuristic
         long bestWidth = Integer.MAX_VALUE;
-        Rectangle currentRect = freeQuads.getFirst();
-        for (Rectangle rect : freeQuads) {
+        Rectangle currentRect = null;
+        freeQuads.goToFirst();
+        for (int i = 0; i < freeQuads.size; i++) {
+            Rectangle rect = freeQuads.getActive();
+            freeQuads.goToNext();
             int shortSide = Math.min(rect.width - quad.getWidth(), rect.height - quad.getHeight());
             if (shortSide < bestWidth && quadFits(quad, rect)) {
                 currentRect = rect;
@@ -134,8 +137,8 @@ public class MaxRectsPacker implements QuadPacker {
 
         return false;
     }
-    
-    private boolean isInside(Rectangle rect1, Rectangle rect2){
+
+    private boolean isInside(Rectangle rect1, Rectangle rect2) {
         //1 2
         //3 4
         boolean corner1 = rect1.x >= rect2.x && rect1.y >= rect2.y;
@@ -143,30 +146,33 @@ public class MaxRectsPacker implements QuadPacker {
         boolean corner3 = rect1.y + rect1.height <= rect2.y + rect2.height;
         return corner1 && corner2 && corner3;
     }
-    
-    private void pruneFreeAreas(){
-        ArrayList<Rectangle> unnecessaryRects = new ArrayList<>();
-        for(Rectangle rect1 : freeQuads){
-            for(Rectangle rect2 : freeQuads){
-                if(isInside(rect1, rect2) && rect1 != rect2){
-                    unnecessaryRects.add(rect1);
+
+    private void pruneFreeAreas() {
+        freeQuads.goToFirst();
+        int size = freeQuads.size;
+        for (int i = 0; i < size; i++) {
+            Rectangle rect1 = freeQuads.getActive();
+            boolean removed = false;
+            for (Rectangle rect2 : freeQuads.toArray()) {
+                if (isInside(rect1, rect2) && rect1 != rect2) {
+                    freeQuads.removeActive();
+                    removed = true;
                     break;
                 }
             }
-        }
-        for(Rectangle rect: unnecessaryRects){
-            freeQuads.remove(rect);
+            if(!removed){
+                freeQuads.goToNext();
+            }
         }
     }
 
     /**
      *
-     * @return List of rectangles representing the free space left in the sprite sheet
+     * @return List of rectangles representing the free space left in the sprite
+     * sheet
      */
-    public LinkedList<Rectangle> getFreeQuads() {
+    public CustomLinkedList<Rectangle> getFreeQuads() {
         return freeQuads;
     }
-    
-    
 
 }

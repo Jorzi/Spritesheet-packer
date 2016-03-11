@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+import utils.CustomLinkedList;
 
 /**
  *
@@ -16,14 +17,14 @@ import java.util.LinkedList;
  */
 public class SortedMaxRectsPacker implements QuadPacker {
 
-    private LinkedList<Rectangle> freeQuads;
+    private CustomLinkedList<Rectangle> freeQuads;
     
     public SortedMaxRectsPacker() {
     }
 
     @Override
     public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception {
-        ArrayList<Quad>quads2 = (ArrayList<Quad>)quads.clone();
+        ArrayList<Quad> quads2 = (ArrayList<Quad>)quads.clone();
         Collections.sort(quads2, Collections.reverseOrder());
         MaxRectsPacker packer = new MaxRectsPacker();
         QuadLayout layout = packer.generateLayout(quads2, maxWidth);
@@ -31,7 +32,7 @@ public class SortedMaxRectsPacker implements QuadPacker {
         return layout;
     }
 
-    public LinkedList<Rectangle> getFreeQuads() {
+    public CustomLinkedList<Rectangle> getFreeQuads() {
         return freeQuads;
     }
     

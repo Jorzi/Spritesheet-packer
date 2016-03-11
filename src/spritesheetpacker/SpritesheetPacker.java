@@ -208,7 +208,7 @@ public class SpritesheetPacker {
         if (quadOutlines && packer.getClass() == MaxRectsPacker.class) {
             canvas.setColor(Color.green);
             MaxRectsPacker blah = (MaxRectsPacker) packer;
-            for (Rectangle rect : blah.getFreeQuads()) {
+            for (Rectangle rect : blah.getFreeQuads().toArray()) {
                 canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
             }
         }
