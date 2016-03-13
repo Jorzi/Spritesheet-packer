@@ -5,8 +5,6 @@
  */
 package spritesheetpacker;
 
-import java.util.ArrayList;
-
 /**
  * Interface for all the packing algorithms in order to easily plug them into
  * the main application
@@ -25,6 +23,6 @@ public interface QuadPacker {
      * overlap, as well as the bounding rectangle of the whole layout
      * @throws Exception if maxWidth is too small to accomodate all images
      */
-    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception;
+    public QuadLayout generateLayout(Quad[] quads, int maxWidth) throws Exception;
 
 }

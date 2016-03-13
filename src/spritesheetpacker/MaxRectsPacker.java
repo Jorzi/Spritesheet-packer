@@ -6,8 +6,6 @@
 package spritesheetpacker;
 
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import utils.CustomLinkedList;
 
 /**
@@ -34,18 +32,21 @@ public class MaxRectsPacker implements QuadPacker {
      * @throws Exception if maxWidth is too small to accommodate all images
      */
     @Override
-    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception {
+    public QuadLayout generateLayout(Quad[] quads, int maxWidth) {
         freeQuads = new CustomLinkedList<>();
         freeQuads.addLast(new Rectangle(maxWidth, Integer.MAX_VALUE));
-        ArrayList<Quad> output = new ArrayList<>();
+        Quad[] output = new Quad[quads.length];
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;
         int maxX = 0;
         int maxY = 0;
+        int index = 0;
         for (Quad quad : quads) {
+            /*
             if (quad.getWidth() > maxWidth) {
                 throw new Exception("maxWidth too low to include " + quad.getName());
             }
+            */
             Rectangle freeArea = getBestFreeArea(quad);
             quad.x = freeArea.x;
             quad.y = freeArea.y;
@@ -60,7 +61,7 @@ public class MaxRectsPacker implements QuadPacker {
                 }
             }
             pruneFreeAreas();
-            output.add(quad);
+            output[index++] = quad;
 
             minX = quad.x < minX ? quad.x : minX;
             minY = quad.y < minY ? quad.y : minY;
@@ -153,7 +154,8 @@ public class MaxRectsPacker implements QuadPacker {
         for (int i = 0; i < size; i++) {
             Rectangle rect1 = freeQuads.getActive();
             boolean removed = false;
-            for (Rectangle rect2 : freeQuads.toArray()) {
+            for (Object obj : freeQuads.toArray()) {
+                Rectangle rect2 = (Rectangle) obj;
                 if (isInside(rect1, rect2) && rect1 != rect2) {
                     freeQuads.removeActive();
                     removed = true;

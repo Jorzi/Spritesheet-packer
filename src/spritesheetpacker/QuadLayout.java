@@ -19,7 +19,7 @@ public class QuadLayout {
     /**
      * List of quads and their positions
      */
-    public ArrayList<Quad> quads;
+    public Quad[] quads;
 
     /**
      * Bounding rectangle of all quads combined
@@ -31,7 +31,7 @@ public class QuadLayout {
      * @param quads List of quads
      * @param bounds Bounding rectangle of all quads combined
      */
-    public QuadLayout(ArrayList<Quad> quads, Rectangle bounds) {
+    public QuadLayout(Quad[] quads, Rectangle bounds) {
         this.quads = quads;
         this.bounds = bounds;
     }

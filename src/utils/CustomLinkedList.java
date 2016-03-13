@@ -84,13 +84,38 @@ public class CustomLinkedList<T> {
             size++;
         }
     }
+    
+    private void removeNode(Node<T> node){
+        if(size > 0){
+            if(node.prev != null){
+                node.prev.next = node.next;
+            }
+            if(node.next != null){
+                node.next.prev = node.prev;
+            }
+            if (first == node){
+                first = node.next;
+            }
+            if (last == node){
+                last = node.prev;
+            }
+            size--;
+        }
+    }
 
     public void removeActive() {
-        if(size > 0){
-            active.prev.next = active.next;
-            active.next.prev = active.prev;
-            active = active.next;
-            size--;
+        removeNode(active);
+        active = active.next;
+    }
+    
+    public void remove(T item){
+        Node<T> node = this.first;
+        for (int i = 0; i < this.size; i++){
+            if(node.data == item){
+                removeNode(node);
+                return;
+            }
+            node = node.next;
         }
     }
 
@@ -123,13 +148,13 @@ public class CustomLinkedList<T> {
         active = active.next;
     }
     
-    public T[] toArray(){
+    public Object[] toArray(){
         Object[] array = new Object[size];
         Node<T> node = this.first;
         for (int i = 0; i < size; i++){
             array[i] = node.data;
             node = node.next;
         }
-        return (T[])array;
+        return array;
     }
 }

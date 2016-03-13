@@ -13,7 +13,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
@@ -82,9 +81,9 @@ public class SpritesheetPacker {
         }
         //scan the selected folder for files
         File f = new File(filePath);
-        ArrayList<File> files = new ArrayList<>(Arrays.asList(f.listFiles()));
-        ArrayList<File> imageFiles = imagesOnly(files);
-        System.out.println(imageFiles);
+        File[] files = f.listFiles();
+        File[] imageFiles = imagesOnly(files);
+        System.out.println(Arrays.toString(imageFiles));
 
         //load the images and create the sprite sheet
         LayoutWriter writer = new SimpleLayoutWriter();
@@ -139,11 +138,19 @@ public class SpritesheetPacker {
      * @return a new list object containing only entries whose file extension is
      * .png
      */
-    public static ArrayList<File> imagesOnly(ArrayList<File> files) {
-        ArrayList<File> images = new ArrayList<>();
+    public static File[] imagesOnly(File[] files) {
+        int length = 0;
         for (File file : files) {
             if (file.getName().endsWith(".png")) {
-                images.add(file);
+                length++;
+            }
+        }
+        File[] images = new File[length];
+        int i = 0;
+        for (File file : files) {
+            if (file.getName().endsWith(".png")) {
+                images[i] = file;
+                i++;
             }
         }
         return images;
@@ -157,13 +164,13 @@ public class SpritesheetPacker {
      * imageIO.read, it will be skipped and a message will be printed.
      * @return List of BufferedImage objects from successfully loaded files.
      */
-    public static ArrayList<BufferedImage> loadImages(ArrayList<File> files) {
-        ArrayList<BufferedImage> images = new ArrayList<>();
-        for (File file : files) {
+    public static BufferedImage[] loadImages(File[] files) {
+        BufferedImage[] images = new BufferedImage[files.length];
+        for (int i = 0; i < files.length; i++) {
             try {
-                images.add(ImageIO.read(file));
+                images[i] = ImageIO.read(files[i]);
             } catch (IOException ex) {
-                System.out.println("could not open file: " + file.getName());
+                System.out.println("could not open file: " + files[i].getName());
             }
         }
         return images;
@@ -181,11 +188,11 @@ public class SpritesheetPacker {
      * @return the generated sprite sheet image
      * @throws java.lang.Exception if any of the images are wider than maxWidth
      */
-    public static SpriteSheet generateSpritesheet(ArrayList<File> imageFiles, QuadPacker packer, LayoutWriter writer, int maxWidth) throws Exception {
-        ArrayList<BufferedImage> images = loadImages(imageFiles);
-        ArrayList<Quad> quads = new ArrayList<>();
-        for (int i = 0; i < images.size(); i++) {
-            quads.add(new Quad(images.get(i).getData().getBounds(), imageFiles.get(i).getName()));
+    public static SpriteSheet generateSpritesheet(File[] imageFiles, QuadPacker packer, LayoutWriter writer, int maxWidth) throws Exception {
+        BufferedImage[] images = loadImages(imageFiles);
+        Quad[] quads = new Quad[images.length];
+        for (int i = 0; i < images.length; i++) {
+            quads[i] = new Quad(images[i].getData().getBounds(), imageFiles[i].getName());
         }
         QuadLayout layout = packer.generateLayout(quads, maxWidth);
         System.out.println("Packing ratio: " + getPackingRatio(layout));
@@ -194,9 +201,9 @@ public class SpritesheetPacker {
         int height = layout.bounds.height + layout.bounds.y;
         BufferedImage spritesheet = new BufferedImage(maxWidth, height, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D canvas = spritesheet.createGraphics();
-        for (int i = 0; i < images.size(); i++) {
-            Rectangle coords = mappings.get(imageFiles.get(i).getName());
-            canvas.drawImage(images.get(i), coords.x, coords.y, null);
+        for (int i = 0; i < images.length; i++) {
+            Rectangle coords = mappings.get(imageFiles[i].getName());
+            canvas.drawImage(images[i], coords.x, coords.y, null);
             if (quadOutlines) {
                 canvas.setColor(Color.red);
                 canvas.drawRect(coords.x, coords.y, coords.width - 1, coords.height - 1);
@@ -208,14 +215,16 @@ public class SpritesheetPacker {
         if (quadOutlines && packer.getClass() == MaxRectsPacker.class) {
             canvas.setColor(Color.green);
             MaxRectsPacker blah = (MaxRectsPacker) packer;
-            for (Rectangle rect : blah.getFreeQuads().toArray()) {
+            for (Object obj : blah.getFreeQuads().toArray()) {
+                Rectangle rect = (Rectangle) obj;
                 canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
             }
         }
         if (quadOutlines && packer.getClass() == GuillotinePacker.class) {
             canvas.setColor(Color.green);
             GuillotinePacker blah = (GuillotinePacker) packer;
-            for (Rectangle rect : blah.getFreeQuads()) {
+            for (Object obj : blah.getFreeQuads().toArray()) {
+                Rectangle rect = (Rectangle) obj;
                 canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
             }
         }

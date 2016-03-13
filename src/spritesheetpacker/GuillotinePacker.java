@@ -8,6 +8,7 @@ package spritesheetpacker;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import utils.CustomLinkedList;
 
 /**
  *
@@ -15,7 +16,7 @@ import java.util.LinkedList;
  */
 public class GuillotinePacker implements QuadPacker {
 
-    private LinkedList<Rectangle> freeQuads;
+    private CustomLinkedList<Rectangle> freeQuads;
 
     /**
      * Default constructor
@@ -33,15 +34,16 @@ public class GuillotinePacker implements QuadPacker {
      * @throws Exception if maxWidth is too small to accomodate all images
      */
     @Override
-    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception {
+    public QuadLayout generateLayout(Quad[] quads, int maxWidth) throws Exception {
         //reset list, add initial bounds
-        freeQuads = new LinkedList<>();
-        freeQuads.add(new Rectangle(maxWidth, Integer.MAX_VALUE));
-        ArrayList<Quad> output = new ArrayList<>();
+        freeQuads = new CustomLinkedList<>();
+        freeQuads.addFirst(new Rectangle(maxWidth, Integer.MAX_VALUE));
+        Quad[] output = new Quad[quads.length];
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;
         int maxX = 0;
         int maxY = 0;
+        int index = 0;
         for (Quad quad : quads) {
             if (quad.getWidth() > maxWidth) {
                 throw new Exception("maxWidth too low to include" + quad.getName());
@@ -50,7 +52,7 @@ public class GuillotinePacker implements QuadPacker {
             quad.x = freeArea.x;
             quad.y = freeArea.y;
             split(freeArea, quad);
-            output.add(quad);
+            output[index++] = quad;
 
             minX = quad.x < minX ? quad.x : minX;
             minY = quad.y < minY ? quad.y : minY;
@@ -79,8 +81,8 @@ public class GuillotinePacker implements QuadPacker {
         }
 
         freeQuads.remove(freeArea);
-        freeQuads.add(rect1);
-        freeQuads.add(rect2);
+        freeQuads.addLast(rect1);
+        freeQuads.addLast(rect2);
     }
 
     private boolean quadFits(Quad quad, Rectangle bounds) {
@@ -92,7 +94,10 @@ public class GuillotinePacker implements QuadPacker {
         //TODO: add possibility to change heuristic
         int bestHeight = Integer.MAX_VALUE;
         Rectangle currentRect = freeQuads.getFirst();
-        for (Rectangle rect : freeQuads) {
+        freeQuads.goToFirst();
+        for (int i = 0; i < freeQuads.size; i++) {
+            Rectangle rect = freeQuads.getActive();
+            freeQuads.goToNext();
             if (rect.height < bestHeight && quadFits(quad, rect)) {
                 currentRect = rect;
                 bestHeight = rect.height;
@@ -104,7 +109,7 @@ public class GuillotinePacker implements QuadPacker {
      *
      * @return List of rectangles representing the free space left in the sprite sheet
      */
-    public LinkedList<Rectangle> getFreeQuads() {
+    public CustomLinkedList<Rectangle> getFreeQuads() {
         return freeQuads;
     }
 }

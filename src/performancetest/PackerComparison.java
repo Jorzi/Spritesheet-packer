@@ -13,8 +13,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,8 +28,6 @@ import spritesheetpacker.SimpleLayoutWriter;
 import spritesheetpacker.SortedMaxRectsPacker;
 import spritesheetpacker.SpriteSheet;
 import static spritesheetpacker.SpritesheetPacker.getPackingRatio;
-import static spritesheetpacker.SpritesheetPacker.loadImages;
-import static spritesheetpacker.SpritesheetPacker.quadOutlines;
 
 /**
  *
@@ -41,7 +37,7 @@ public class PackerComparison {
 
     public static void runTest(int numberOfQuads, int seed, int maxWidth, String outputPath) {
         //initialize stuff
-        ArrayList<Quad> quads = generateRandomQuads(numberOfQuads, seed, maxWidth/8);
+        Quad[] quads = generateRandomQuads(numberOfQuads, seed, maxWidth/8);
         QuadPacker packer1 = new ScanlinePacker();
         QuadPacker packer2 = new GuillotinePacker();
         QuadPacker packer3 = new MaxRectsPacker();
@@ -62,7 +58,7 @@ public class PackerComparison {
         testPacker(packer4, quads, writer, maxWidth, outputPath);
     }
     
-    public static void testPacker(QuadPacker packer, ArrayList<Quad> quads, LayoutWriter writer, int maxWidth, String outputPath){
+    public static void testPacker(QuadPacker packer, Quad[] quads, LayoutWriter writer, int maxWidth, String outputPath){
         SpriteSheet spritesheet1 = generateSpritesheet(quads, packer, writer, maxWidth);
          File outputFolder = new File(outputPath);
         outputFolder.mkdir();
@@ -91,7 +87,7 @@ public class PackerComparison {
         }
     }
 
-    public static SpriteSheet generateSpritesheet(ArrayList<Quad> quads, QuadPacker packer, LayoutWriter writer, int maxWidth){
+    public static SpriteSheet generateSpritesheet(Quad[] quads, QuadPacker packer, LayoutWriter writer, int maxWidth){
         
         QuadLayout layout;
         try {
@@ -106,10 +102,10 @@ public class PackerComparison {
         int height = layout.bounds.height + layout.bounds.y;
         BufferedImage spritesheet = new BufferedImage(maxWidth, height, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D canvas = spritesheet.createGraphics();
-        ArrayList<BufferedImage> images = imagesFromQuads(layout.quads);
-        for (int i = 0; i < images.size(); i++) {
-            Quad coords = layout.quads.get(i);
-            canvas.drawImage(images.get(i), coords.x, coords.y, null);
+        BufferedImage[] images = imagesFromQuads(layout.quads);
+        for (int i = 0; i < images.length; i++) {
+            Quad coords = layout.quads[i];
+            canvas.drawImage(images[i], coords.x, coords.y, null);
             //draw quad outlines
             canvas.setColor(Color.red);
             canvas.drawRect(coords.x, coords.y, coords.getWidth() - 1, coords.getHeight() - 1);
@@ -119,43 +115,47 @@ public class PackerComparison {
         if (packer.getClass() == MaxRectsPacker.class) {
             canvas.setColor(Color.green);
             MaxRectsPacker blah = (MaxRectsPacker) packer;
-            for (Rectangle rect : blah.getFreeQuads().toArray()) {
+            for (Object obj : blah.getFreeQuads().toArray()) {
+                Rectangle rect = (Rectangle) obj;
                 canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
             }
         }
         if (packer.getClass() == SortedMaxRectsPacker.class) {
             canvas.setColor(Color.green);
             SortedMaxRectsPacker blah = (SortedMaxRectsPacker) packer;
-            for (Rectangle rect : blah.getFreeQuads().toArray()) {
+            for (Object obj : blah.getFreeQuads().toArray()) {
+                Rectangle rect = (Rectangle) obj;
                 canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
             }
         }
         if (packer.getClass() == GuillotinePacker.class) {
             canvas.setColor(Color.green);
             GuillotinePacker blah = (GuillotinePacker) packer;
-            for (Rectangle rect : blah.getFreeQuads()) {
+            for (Object obj : blah.getFreeQuads().toArray()) {
+                Rectangle rect = (Rectangle) obj;
                 canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
             }
         }
         return new SpriteSheet(spritesheet, layoutString);
     }
 
-    public static ArrayList<Quad> generateRandomQuads(int count, int seed, int maxWidth) {
+    public static Quad[] generateRandomQuads(int count, int seed, int maxWidth) {
         Random rand = new Random(seed);
-        ArrayList<Quad> quads = new ArrayList<>();
+        Quad[] quads = new Quad[count];
         for (int i = 0; i < count; i++) {
             int width = rand.nextInt(maxWidth - 1) + 1;
             int height = rand.nextInt(maxWidth - 1) + 1;
-            quads.add(new Quad(0, 0, width, height, "Q" + i));
+            quads[i] = new Quad(0, 0, width, height, "Q" + i);
         }
         return quads;
     }
 
-    public static ArrayList<BufferedImage> imagesFromQuads(ArrayList<Quad> quads) {
-        ArrayList<BufferedImage> images = new ArrayList<>();
+    public static BufferedImage[] imagesFromQuads(Quad[] quads) {
+        BufferedImage[] images = new BufferedImage[quads.length];
+        int i = 0;
         for (Quad quad : quads) {
             BufferedImage img = new BufferedImage(quad.getWidth(), quad.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-            images.add(img);
+            images[i] = img;
         }
         return images;
     }

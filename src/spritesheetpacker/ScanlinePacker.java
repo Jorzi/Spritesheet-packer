@@ -6,7 +6,7 @@
 package spritesheetpacker;
 
 import java.awt.Rectangle;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -35,14 +35,15 @@ public class ScanlinePacker implements QuadPacker {
      * @throws Exception if maxWidth is too small to accomodate all images
      */
     @Override
-    public QuadLayout generateLayout(ArrayList<Quad> quads, int maxWidth) throws Exception {
-        ArrayList<Quad> output = new ArrayList<>();
+    public QuadLayout generateLayout(Quad[] quads, int maxWidth) throws Exception {
+        Quad[] output = new Quad[quads.length];
         int minX = Integer.MAX_VALUE;
         int minY = Integer.MAX_VALUE;
         int maxX = 0;
         int maxY = 0;
-        ArrayList<Quad>quads2 = (ArrayList<Quad>)quads.clone();
-        Collections.sort(quads2, Collections.reverseOrder());
+        Quad[] quads2 = quads.clone();
+        Arrays.sort(quads2, Collections.reverseOrder());
+        int index = 0;
         for (Quad quad : quads2) {
             if (quad.getWidth() > maxWidth) {
                 throw new Exception("maxWidth too low to include" + quad.getName());
@@ -60,7 +61,7 @@ public class ScanlinePacker implements QuadPacker {
 
                 }
                 if (quadFits) {
-                    output.add(quad);
+                    output[index++] = quad;
                     //System.out.println(output.size());
                     minX = quad.x < minX ? quad.x : minX;
                     minY = quad.y < minY ? quad.y : minY;
@@ -75,9 +76,9 @@ public class ScanlinePacker implements QuadPacker {
         return new QuadLayout(output, new Rectangle(minX, minY, maxX - minX, maxY - minY));
     }
 
-    private boolean collisionDetection(Quad testQuad, ArrayList<Quad> quads) {
+    private boolean collisionDetection(Quad testQuad, Quad[] quads) {
         for (Quad quad : quads) {
-            if (testQuad.x < quad.x + quad.getWidth()
+            if (quad != null && testQuad.x < quad.x + quad.getWidth()
                     && testQuad.y < quad.y + quad.getHeight()
                     && quad.x < testQuad.x + testQuad.getWidth()
                     && quad.y < testQuad.y + testQuad.getHeight()) {
