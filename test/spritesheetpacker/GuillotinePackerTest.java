@@ -5,7 +5,6 @@
  */
 package spritesheetpacker;
 
-import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,22 +17,22 @@ import static org.junit.Assert.*;
  * @author Maconi
  */
 public class GuillotinePackerTest {
-    
+
     public GuillotinePackerTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -44,22 +43,22 @@ public class GuillotinePackerTest {
     @Test
     public void testGenerateLayout() throws Exception {
         System.out.println("generateLayout");
-        ArrayList<Quad> quads = new ArrayList<>();
-        quads.add(new Quad(0,0, 100, 200, "test1"));
-        quads.add(new Quad(0,0, 150, 175, "test2"));
+        Quad[] quads = new Quad[2];
+        quads[0] = new Quad(0, 0, 100, 200, "test1");
+        quads[1] = new Quad(0, 0, 150, 175, "test2");
         int maxWidth = 1024;
         GuillotinePacker instance = new GuillotinePacker();
         QuadLayout result = instance.generateLayout(quads, maxWidth);
         assertEquals(200, result.bounds.height);
         assertEquals(250, result.bounds.width);
-        assertEquals(2, result.quads.size());
+        assertEquals(2, result.quads.length);
         boolean throwException = false;
-        try{
+        try {
             result = instance.generateLayout(quads, 149);
-        }catch(Exception e){
+        } catch (Exception e) {
             throwException = true;
         }
         assertEquals(true, throwException);
     }
-    
+
 }

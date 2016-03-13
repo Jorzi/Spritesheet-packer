@@ -7,7 +7,6 @@ package spritesheetpacker;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -47,15 +46,15 @@ public class SpritesheetPackerTest {
     @Test
     public void testImagesOnly() {
         System.out.println("imagesOnly");
-        ArrayList<File> files = new ArrayList<>();
-        files.add(new File("test1.png"));
-        files.add(new File("test2.txt"));
-        files.add(new File("test3png"));
-        files.add(new File("test4.html"));
+        File[] files = new File[4];
+        files[0] = new File("test1.png");
+        files[1] = new File("test2.txt");
+        files[2] = new File("test3png");
+        files[3] = new File("test4.html");
 
-        ArrayList<File> result = SpritesheetPacker.imagesOnly(files);
-        assertEquals(1, result.size());
-        assertEquals(files.get(0), result.get(0));
+        File[] result = SpritesheetPacker.imagesOnly(files);
+        assertEquals(1, result.length);
+        assertEquals(files[0], result[0]);
     }
 
     /**
@@ -64,11 +63,11 @@ public class SpritesheetPackerTest {
     @Test
     public void testGenerateSpritesheet() throws Exception {
         System.out.println("generateSpritesheet");
-        ArrayList<File> imageFiles = new ArrayList<>();
-        imageFiles.add(new File("test_images" + File.separator + "cliff_flat_1.png"));
+        File[] imageFiles = new File[1];
+        imageFiles[0] = new File("test_images" + File.separator + "cliff_flat_1.png");
         QuadPacker packer = new ScanlinePacker();
         int maxWidth = 1024;
-        BufferedImage expResult = loadImages(imageFiles).get(0);
+        BufferedImage expResult = loadImages(imageFiles)[0];
         LayoutWriter writer = new SimpleLayoutWriter();
         SpriteSheet result = SpritesheetPacker.generateSpritesheet(imageFiles, packer, writer, maxWidth);
         assertEquals(expResult.getHeight(), result.image.getHeight());
@@ -77,7 +76,7 @@ public class SpritesheetPackerTest {
 
     /**
      * Test of getPowerOfTwo method, of class SpritesheetPacker.
-     * 
+     *
      */
     @Test
     public void testGetPowerOfTwo() {
@@ -94,6 +93,5 @@ public class SpritesheetPackerTest {
         int result = SpritesheetPacker.getPowerOfTwo(input);
         assertEquals(512, result);
     }
-
 
 }

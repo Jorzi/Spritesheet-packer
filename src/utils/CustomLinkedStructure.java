@@ -45,9 +45,10 @@ public class CustomLinkedStructure<T> {
         last = null;
         size = 0;
     }
-    
+
     /**
      * Add an element to the end of the chain
+     *
      * @param item
      */
     public void addLast(T item) {
@@ -67,6 +68,7 @@ public class CustomLinkedStructure<T> {
 
     /**
      * Add an element to the start of the chain
+     *
      * @param item
      */
     public void addFirst(T item) {
@@ -86,6 +88,7 @@ public class CustomLinkedStructure<T> {
 
     /**
      * Insert an element between the active node and the next.
+     *
      * @param item
      */
     public void insertNext(T item) {
@@ -98,24 +101,28 @@ public class CustomLinkedStructure<T> {
         } else {
             node.next = active.next;
             node.prev = active;
-            active.next.prev = node;
+            if (active.next != null) {
+                active.next.prev = node;
+            } else {
+                last = node;
+            }
             active.next = node;
             size++;
         }
     }
-    
-    private void removeNode(Node<T> node){
-        if(size > 0){
-            if(node.prev != null){
+
+    private void removeNode(Node<T> node) {
+        if (size > 0) {
+            if (node.prev != null) {
                 node.prev.next = node.next;
             }
-            if(node.next != null){
+            if (node.next != null) {
                 node.next.prev = node.prev;
             }
-            if (first == node){
+            if (first == node) {
                 first = node.next;
             }
-            if (last == node){
+            if (last == node) {
                 last = node.prev;
             }
             size--;
@@ -126,19 +133,22 @@ public class CustomLinkedStructure<T> {
      * Remove the active element and move one step forward
      */
     public void removeActive() {
-        removeNode(active);
-        active = active.next;
+        if (size > 0) {
+            removeNode(active);
+            active = active.next;
+        }
     }
-    
+
     /**
-     * Searches for the first occurrence of the specified element and removes it 
+     * Searches for the first occurrence of the specified element and removes it
      * from the chain if found.
+     *
      * @param item
      */
-    public void remove(T item){
+    public void remove(T item) {
         Node<T> node = this.first;
-        for (int i = 0; i < this.size; i++){
-            if(node.data == item){
+        for (int i = 0; i < this.size; i++) {
+            if (node.data == item) {
                 removeNode(node);
                 return;
             }
@@ -148,35 +158,51 @@ public class CustomLinkedStructure<T> {
 
     /**
      * Get the first element in the chain
+     *
      * @return
      */
     public T getFirst() {
-        return first.data;
+        if (first != null) {
+            return first.data;
+        }
+        return null;
     }
 
     /**
      * Get the last element in the chain
+     *
      * @return
      */
     public T getLast() {
-        return last.data;
+        if (last != null) {
+            return last.data;
+        }
+        return null;
     }
 
     /**
      * Get the active element
+     *
      * @return
      */
     public T getActive() {
-        return active.data;
+        if (active != null) {
+            return active.data;
+        }
+        return null;
     }
 
     /**
-     * Get the element next to the active one
+     * Move to the element next to the active one and return it
+     *
      * @return
      */
     public T getNext() {
         active = active.next;
-        return active.data;
+        if (active != null) {
+            return active.data;
+        }
+        return null;
     }
 
     /**
@@ -199,15 +225,16 @@ public class CustomLinkedStructure<T> {
     public void goToNext() {
         active = active.next;
     }
-    
+
     /**
      * Return all elements in the structure as an array.
+     *
      * @return A new array object, containing all the elements of the structure.
      */
-    public Object[] toArray(){
+    public Object[] toArray() {
         Object[] array = new Object[size];
         Node<T> node = this.first;
-        for (int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             array[i] = node.data;
             node = node.next;
         }
