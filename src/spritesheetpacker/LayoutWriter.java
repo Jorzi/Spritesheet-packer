@@ -6,13 +6,14 @@
 package spritesheetpacker;
 
 /**
- *
+ * Interface for generating layout information in text format. Enables the user 
+ * to easily select the markup style
  * @author Maconi
  */
 public interface LayoutWriter {
     
     /**
-     *
+     * Write a layout description based on a generated quad layout.
      * @param layout
      * @return
      */

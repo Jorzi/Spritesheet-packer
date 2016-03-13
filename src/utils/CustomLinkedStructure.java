@@ -6,11 +6,12 @@
 package utils;
 
 /**
- * Minimalist implementation of a linked data structure
+ * Minimalist implementation of a doubly linked data structure.
  *
  * @author Maconi
+ * @param <T>
  */
-public class CustomLinkedList<T> {
+public class CustomLinkedStructure<T> {
 
     private class Node<T> {
 
@@ -29,16 +30,26 @@ public class CustomLinkedList<T> {
     private Node<T> first;
     private Node<T> active;
     private Node<T> last;
+
+    /**
+     * Number of elements in the "list"
+     */
     public int size;
 
-    public CustomLinkedList() {
+    /**
+     * Create a new empty structure
+     */
+    public CustomLinkedStructure() {
         first = null;
         active = null;
         last = null;
         size = 0;
     }
     
-
+    /**
+     * Add an element to the end of the chain
+     * @param item
+     */
     public void addLast(T item) {
         Node<T> node = new Node<>(item);
         if (size == 0) {
@@ -54,6 +65,10 @@ public class CustomLinkedList<T> {
         }
     }
 
+    /**
+     * Add an element to the start of the chain
+     * @param item
+     */
     public void addFirst(T item) {
         Node<T> node = new Node<>(item);
         if (size == 0) {
@@ -69,6 +84,10 @@ public class CustomLinkedList<T> {
         }
     }
 
+    /**
+     * Insert an element between the active node and the next.
+     * @param item
+     */
     public void insertNext(T item) {
         Node<T> node = new Node<>(item);
         if (size == 0) {
@@ -103,11 +122,19 @@ public class CustomLinkedList<T> {
         }
     }
 
+    /**
+     * Remove the active element and move one step forward
+     */
     public void removeActive() {
         removeNode(active);
         active = active.next;
     }
     
+    /**
+     * Searches for the first occurrence of the specified element and removes it 
+     * from the chain if found.
+     * @param item
+     */
     public void remove(T item){
         Node<T> node = this.first;
         for (int i = 0; i < this.size; i++){
@@ -119,35 +146,64 @@ public class CustomLinkedList<T> {
         }
     }
 
+    /**
+     * Get the first element in the chain
+     * @return
+     */
     public T getFirst() {
         return first.data;
     }
 
+    /**
+     * Get the last element in the chain
+     * @return
+     */
     public T getLast() {
         return last.data;
     }
 
+    /**
+     * Get the active element
+     * @return
+     */
     public T getActive() {
         return active.data;
     }
 
+    /**
+     * Get the element next to the active one
+     * @return
+     */
     public T getNext() {
         active = active.next;
         return active.data;
     }
 
+    /**
+     * Move the "cursor" to the start, making it the active node
+     */
     public void goToFirst() {
         active = first;
     }
 
+    /**
+     * Move the "cursor" to the end, making it the active node
+     */
     public void goToLast() {
         active = last;
     }
 
+    /**
+     * Move the "cursor" to the next node, making it the active node
+     */
     public void goToNext() {
         active = active.next;
     }
     
+    /**
+     * Return all elements in the structure as an array.
+     * @return A new array object, containing all the elements of the structure.
+     */
     public Object[] toArray(){
         Object[] array = new Object[size];
         Node<T> node = this.first;

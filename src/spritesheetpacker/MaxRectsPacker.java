@@ -6,15 +6,17 @@
 package spritesheetpacker;
 
 import java.awt.Rectangle;
-import utils.CustomLinkedList;
+import utils.CustomLinkedStructure;
 
 /**
- *
+ * The MaxRects data structure is regarded by many as the best for rectangle bin
+ * packing. It stores a series of overlapping rectangles representing the 
+ * largest possible rectangular areas available.
  * @author Maconi
  */
 public class MaxRectsPacker implements QuadPacker {
 
-    private CustomLinkedList<Rectangle> freeQuads;
+    private CustomLinkedStructure<Rectangle> freeQuads;
 
     /**
      * Default constructor
@@ -32,8 +34,8 @@ public class MaxRectsPacker implements QuadPacker {
      * @throws Exception if maxWidth is too small to accommodate all images
      */
     @Override
-    public QuadLayout generateLayout(Quad[] quads, int maxWidth) {
-        freeQuads = new CustomLinkedList<>();
+    public QuadLayout generateLayout(Quad[] quads, int maxWidth) throws Exception {
+        freeQuads = new CustomLinkedStructure<>();
         freeQuads.addLast(new Rectangle(maxWidth, Integer.MAX_VALUE));
         Quad[] output = new Quad[quads.length];
         int minX = Integer.MAX_VALUE;
@@ -42,11 +44,9 @@ public class MaxRectsPacker implements QuadPacker {
         int maxY = 0;
         int index = 0;
         for (Quad quad : quads) {
-            /*
             if (quad.getWidth() > maxWidth) {
                 throw new Exception("maxWidth too low to include " + quad.getName());
             }
-            */
             Rectangle freeArea = getBestFreeArea(quad);
             quad.x = freeArea.x;
             quad.y = freeArea.y;
@@ -173,7 +173,7 @@ public class MaxRectsPacker implements QuadPacker {
      * @return List of rectangles representing the free space left in the sprite
      * sheet
      */
-    public CustomLinkedList<Rectangle> getFreeQuads() {
+    public CustomLinkedStructure<Rectangle> getFreeQuads() {
         return freeQuads;
     }
 

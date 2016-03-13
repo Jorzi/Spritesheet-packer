@@ -8,12 +8,18 @@ package utils;
 import spritesheetpacker.Quad;
 
 /**
- *
+ * Simple merge sort implementation. Not memory efficient.
  * @author Maconi
  */
 public class MergeSort {
 
-    
+    /**
+     * Sorts a Quad array in descending order and returns the sorted array as a 
+     * new object. Hardcoded to work on Quad arrays only since I'm lazy.
+     * @param array array of Quads to be sorted
+     * @return an array of quads, sorted in descending order and containing all 
+     * the objects of the original array
+     */
     public static Quad[] mergeSort(Quad[] array){
         Quad[] output = new Quad[array.length];
         if (array.length == 2){

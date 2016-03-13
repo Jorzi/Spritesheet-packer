@@ -30,11 +30,21 @@ import spritesheetpacker.SpriteSheet;
 import static spritesheetpacker.SpritesheetPacker.getPackingRatio;
 
 /**
- *
+ * A benchmark class for testing and comparing different packing algorithms by
+ * using them on randomly generated data.
  * @author Maconi
  */
 public class PackerComparison {
 
+    /**
+     * Runs a benchmark test, generating a randomized data set based on the
+     * input parameters.
+     * @param numberOfQuads number of randomly generated rectangles.
+     * @param seed seeds the pseudorandom number generator
+     * @param maxWidth width of the generated sprite sheet. The maximum size of 
+     * the generated rectangles is directly proportional to this.
+     * @param outputPath folder path where the resulting sprite sheets are saved
+     */
     public static void runTest(int numberOfQuads, int seed, int maxWidth, String outputPath) {
         //initialize stuff
         Quad[] quads = generateRandomQuads(numberOfQuads, seed, maxWidth/8);
@@ -58,6 +68,14 @@ public class PackerComparison {
         testPacker(packer4, quads, writer, maxWidth, outputPath);
     }
     
+    /**
+     * Tests the specified packing algorithm using the specified data
+     * @param packer the packing algorithm to be tested
+     * @param quads the data used for generating the sprite sheet
+     * @param writer determines the style of the coordinate information
+     * @param maxWidth width of the generated sprite sheet
+     * @param outputPath folder path where the resulting sprite sheets are saved
+     */
     public static void testPacker(QuadPacker packer, Quad[] quads, LayoutWriter writer, int maxWidth, String outputPath){
         SpriteSheet spritesheet1 = generateSpritesheet(quads, packer, writer, maxWidth);
          File outputFolder = new File(outputPath);
@@ -87,6 +105,15 @@ public class PackerComparison {
         }
     }
 
+    /**
+     * Slightly modified version of 
+     * spritesheetpacker.SpritesheetPacker.generateSpritesheet
+     * @param quads the data used for generating the sprite sheet
+     * @param packer algorithm implementing the QuadPacker interface
+     * @param writer determines the style of the coordinate information
+     * @param maxWidth specifies the horizontal pixel limit of the sprite sheet
+     * @return the generated sprite sheet image
+     */
     public static SpriteSheet generateSpritesheet(Quad[] quads, QuadPacker packer, LayoutWriter writer, int maxWidth){
         
         QuadLayout layout;
@@ -139,17 +166,30 @@ public class PackerComparison {
         return new SpriteSheet(spritesheet, layoutString);
     }
 
-    public static Quad[] generateRandomQuads(int count, int seed, int maxWidth) {
+    /**
+     * Randomly generates a set of quads.
+     * @param count number of quads
+     * @param seed seed for the pseudorandom number generator
+     * @param maxSize maximum height and width that the rectangle can have
+     * @return an array of randomly generated Quad objects, whose names are 
+     * based on their index
+     */
+    public static Quad[] generateRandomQuads(int count, int seed, int maxSize) {
         Random rand = new Random(seed);
         Quad[] quads = new Quad[count];
         for (int i = 0; i < count; i++) {
-            int width = rand.nextInt(maxWidth - 1) + 1;
-            int height = rand.nextInt(maxWidth - 1) + 1;
+            int width = rand.nextInt(maxSize - 1) + 1;
+            int height = rand.nextInt(maxSize - 1) + 1;
             quads[i] = new Quad(0, 0, width, height, "Q" + i);
         }
         return quads;
     }
 
+    /**
+     * Generates blank images from Quad objects
+     * @param quads array of Quad objects.
+     * @return array of "blank" images
+     */
     public static BufferedImage[] imagesFromQuads(Quad[] quads) {
         BufferedImage[] images = new BufferedImage[quads.length];
         int i = 0;

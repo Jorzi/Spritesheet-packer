@@ -80,7 +80,7 @@ public class Quad implements Comparable<Quad> {
     }
 
     /**
-     * Compares quads according to their surface area
+     * Compares Quads according to their surface area
      * @param t
      * @return
      */

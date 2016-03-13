@@ -15,17 +15,17 @@ import java.awt.image.BufferedImage;
 public class SpriteSheet {
 
     /**
-     *
+     * The bitmap containing all the sprites
      */
     public BufferedImage image;
 
     /**
-     *
+     * A string containing information of the rectangle coords & positions.
      */
     public String layout;
 
     /**
-     *
+     * Default constructor
      * @param image
      * @param layout
      */

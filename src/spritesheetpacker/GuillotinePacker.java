@@ -6,17 +6,16 @@
 package spritesheetpacker;
 
 import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import utils.CustomLinkedList;
+import utils.CustomLinkedStructure;
 
 /**
- *
+ * The guillotine data structure can be seen as a precursor to MaxRects, saving 
+ * the free space as a series of non-overlapping rectangles
  * @author Maconi
  */
 public class GuillotinePacker implements QuadPacker {
 
-    private CustomLinkedList<Rectangle> freeQuads;
+    private CustomLinkedStructure<Rectangle> freeQuads;
 
     /**
      * Default constructor
@@ -36,7 +35,7 @@ public class GuillotinePacker implements QuadPacker {
     @Override
     public QuadLayout generateLayout(Quad[] quads, int maxWidth) throws Exception {
         //reset list, add initial bounds
-        freeQuads = new CustomLinkedList<>();
+        freeQuads = new CustomLinkedStructure<>();
         freeQuads.addFirst(new Rectangle(maxWidth, Integer.MAX_VALUE));
         Quad[] output = new Quad[quads.length];
         int minX = Integer.MAX_VALUE;
@@ -109,7 +108,7 @@ public class GuillotinePacker implements QuadPacker {
      *
      * @return List of rectangles representing the free space left in the sprite sheet
      */
-    public CustomLinkedList<Rectangle> getFreeQuads() {
+    public CustomLinkedStructure<Rectangle> getFreeQuads() {
         return freeQuads;
     }
 }
