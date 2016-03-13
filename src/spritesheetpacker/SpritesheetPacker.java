@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import javax.imageio.ImageIO;
 
 /**
@@ -67,6 +66,8 @@ public class SpritesheetPacker {
                     packer = new GuillotinePacker();
                 } else if (arg.equals("-maxrects")) {
                     packer = new MaxRectsPacker();
+                } else if (arg.equals("-sortedmaxrects")) {
+                    packer = new SortedMaxRectsPacker();
                 } else if (arg.equals("-outlines")) {
                     quadOutlines = true;
                 } else if (arg.equals("-benchmark")) {
@@ -197,12 +198,11 @@ public class SpritesheetPacker {
         QuadLayout layout = packer.generateLayout(quads, maxWidth);
         System.out.println("Packing ratio: " + getPackingRatio(layout));
         String layoutString = writer.WriteLayout(layout);
-        HashMap<String, Rectangle> mappings = layout.getMappings();
         int height = layout.bounds.height + layout.bounds.y;
         BufferedImage spritesheet = new BufferedImage(maxWidth, height, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D canvas = spritesheet.createGraphics();
         for (int i = 0; i < images.length; i++) {
-            Rectangle coords = mappings.get(imageFiles[i].getName());
+            Rectangle coords = linearSearch(layout.quads, imageFiles[i].getName());
             canvas.drawImage(images[i], coords.x, coords.y, null);
             if (quadOutlines) {
                 canvas.setColor(Color.red);
@@ -215,6 +215,14 @@ public class SpritesheetPacker {
         if (quadOutlines && packer.getClass() == MaxRectsPacker.class) {
             canvas.setColor(Color.green);
             MaxRectsPacker blah = (MaxRectsPacker) packer;
+            for (Object obj : blah.getFreeQuads().toArray()) {
+                Rectangle rect = (Rectangle) obj;
+                canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
+            }
+        }
+        if (packer.getClass() == SortedMaxRectsPacker.class) {
+            canvas.setColor(Color.green);
+            SortedMaxRectsPacker blah = (SortedMaxRectsPacker) packer;
             for (Object obj : blah.getFreeQuads().toArray()) {
                 Rectangle rect = (Rectangle) obj;
                 canvas.drawRect(rect.x, rect.y, rect.width - 1, rect.height - 1);
@@ -249,5 +257,14 @@ public class SpritesheetPacker {
             areaSum += quad.getHeight() * quad.getWidth();
         }
         return 1.0 * areaSum / boundingArea;
+    }
+
+    public static Rectangle linearSearch(Quad[] array, String name) {
+        for (Quad quad : array) {
+            if (quad.getName().equals(name)) {
+                return new Rectangle(quad.x, quad.y, quad.getWidth(), quad.getHeight());
+            }
+        }
+        return null;
     }
 }

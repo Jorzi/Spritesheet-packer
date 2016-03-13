@@ -6,9 +6,8 @@
 package spritesheetpacker;
 
 import java.awt.Rectangle;
-import java.util.Arrays;
-import java.util.Collections;
 import utils.CustomLinkedList;
+import utils.MergeSort;
 
 /**
  *
@@ -23,8 +22,7 @@ public class SortedMaxRectsPacker implements QuadPacker {
 
     @Override
     public QuadLayout generateLayout(Quad[] quads, int maxWidth) throws Exception {
-        Quad[] quads2 = quads.clone();
-        Arrays.sort(quads2, Collections.reverseOrder());
+        Quad[] quads2 = MergeSort.mergeSort(quads);
         MaxRectsPacker packer = new MaxRectsPacker();
         QuadLayout layout = packer.generateLayout(quads2, maxWidth);
         freeQuads = packer.getFreeQuads();

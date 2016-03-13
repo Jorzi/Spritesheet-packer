@@ -6,8 +6,7 @@
 package spritesheetpacker;
 
 import java.awt.Rectangle;
-import java.util.Arrays;
-import java.util.Collections;
+import utils.MergeSort;
 
 /**
  * This algorithm sorts quads from big to small and places them at the first
@@ -41,8 +40,7 @@ public class ScanlinePacker implements QuadPacker {
         int minY = Integer.MAX_VALUE;
         int maxX = 0;
         int maxY = 0;
-        Quad[] quads2 = quads.clone();
-        Arrays.sort(quads2, Collections.reverseOrder());
+        Quad[] quads2 = MergeSort.mergeSort(quads);
         int index = 0;
         for (Quad quad : quads2) {
             if (quad.getWidth() > maxWidth) {
@@ -54,7 +52,7 @@ public class ScanlinePacker implements QuadPacker {
                 boolean quadFits = false;
                 for (int i = 0; i < maxWidth - quad.getWidth(); i++) {
                     quad.x = i;
-                    if (!collisionDetection(quad, output)) {
+                    if (!collisionDetection(quad, output, index)) {
                         quadFits = true;
                         break;
                     }
@@ -62,7 +60,7 @@ public class ScanlinePacker implements QuadPacker {
                 }
                 if (quadFits) {
                     output[index++] = quad;
-                    //System.out.println(output.size());
+                    System.out.println(index + "/" + quads.length);
                     minX = quad.x < minX ? quad.x : minX;
                     minY = quad.y < minY ? quad.y : minY;
                     maxX = quad.x + quad.getWidth() > maxX ? quad.x + quad.getWidth() : maxX;
@@ -76,9 +74,10 @@ public class ScanlinePacker implements QuadPacker {
         return new QuadLayout(output, new Rectangle(minX, minY, maxX - minX, maxY - minY));
     }
 
-    private boolean collisionDetection(Quad testQuad, Quad[] quads) {
-        for (Quad quad : quads) {
-            if (quad != null && testQuad.x < quad.x + quad.getWidth()
+    private boolean collisionDetection(Quad testQuad, Quad[] quads, int count) {
+        for (int i = 0; i < count; i++) {
+            Quad quad = quads[i];
+            if (testQuad.x < quad.x + quad.getWidth()
                     && testQuad.y < quad.y + quad.getHeight()
                     && quad.x < testQuad.x + testQuad.getWidth()
                     && quad.y < testQuad.y + testQuad.getHeight()) {
