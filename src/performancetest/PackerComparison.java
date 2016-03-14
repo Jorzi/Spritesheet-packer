@@ -118,7 +118,10 @@ public class PackerComparison {
         
         QuadLayout layout;
         try {
+            long startTime = System.currentTimeMillis();
             layout = packer.generateLayout(quads, maxWidth);
+            long endTime = System.currentTimeMillis();
+            System.out.println("Layout generated in " + (endTime - startTime) + " ms");
         } catch (Exception ex) {
             Logger.getLogger(PackerComparison.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("uh oh, failed to generate a layout");

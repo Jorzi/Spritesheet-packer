@@ -31,8 +31,9 @@ public class SpritesheetPacker {
     public static boolean quadOutlines = false;
 
     /**
-     * @param args the available command line arguments are: source=folder_path
-     * specifies the path to the folder containing the sprites
+     * @param args the available command line arguments are: 
+     * 
+     * source=folder_path specifies the path to the folder containing the sprites
      *
      * output=folder_path specifies the folder in which to save the result
      *
@@ -91,8 +92,9 @@ public class SpritesheetPacker {
             }
         }
         if (benchmark) {
-            performancetest.PackerComparison.runTest(500, 0, width, outputPath);
+            performancetest.PackerComparison.runTest(250, 7, width, outputPath);
             return;
+            
         }
         //scan the selected folder for files
         File f = new File(filePath);

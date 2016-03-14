@@ -60,7 +60,7 @@ public class ScanlinePacker implements QuadPacker {
                 }
                 if (quadFits) {
                     output[index++] = quad;
-                    System.out.println(index + "/" + quads.length);
+                    //System.out.println(index + "/" + quads.length);
                     minX = quad.x < minX ? quad.x : minX;
                     minY = quad.y < minY ? quad.y : minY;
                     maxX = quad.x + quad.getWidth() > maxX ? quad.x + quad.getWidth() : maxX;
